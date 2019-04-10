@@ -11,21 +11,26 @@
 					<div class="row">
 
 						<div class="col">
-							<div class="p-5">
-
-								<?= $this->session->flashdata('message'); ?>
-
+							<div class="py-5 px-4">
+								
 								<div class="text-center">
 									<h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
 								</div>
-								<form class="user">
+
+								<?= $this->session->flashdata('message'); ?>
+								
+								<form class="user" method="post" action="<?= base_url('auth'); ?>">
 									<div class="form-group">
 										<input name="email" type="text" class="form-control form-control-user"
-											id="email" placeholder="Email Address">
+											id="email" placeholder="Email Address" value="<?= set_value('email'); //Set value if exist ?>">
+										<?php //Shows error message if any ?>
+										<?= form_error('email', '<small class="text-danger pl-3">* ', '</small>'); ?>
 									</div>
 									<div class="form-group">
 										<input name="password" type="password" class="form-control form-control-user"
 											id="password" placeholder="Password">
+										<?php //Shows error message if any ?>
+										<?= form_error('password', '<small class="text-danger pl-3">* ', '</small>'); ?>	
 									</div>
 
 									<?php

@@ -5,7 +5,7 @@
 			<!-- Nested Row within Card Body -->
 			<div class="row">
 				<div class="col">
-					<div class="p-5">
+					<div class="py-5 px-4">
 
 						<div class="text-center">
 							<h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
@@ -26,15 +26,14 @@
 								<?= form_error('email', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
 
-							<div class="form-group row">
-								<div class="col-sm-6 mb-3 mb-sm-0">
-									<input name="password1" type="password" class="form-control form-control-user"
-										id="password1" placeholder="Password">
-								</div>
-								<div class="col-sm-6">
-									<input name="password2" type="password" class="form-control form-control-user"
-										id="password2" placeholder="Repeat Password">
-								</div>
+							<div class="form-group">
+								<input name="password1" type="password" class="form-control form-control-user"
+									id="password1" placeholder="Password">
+							</div>
+
+							<div class="form-group">
+								<input name="password2" type="password" class="form-control form-control-user"
+									id="password2" placeholder="Repeat Password">
 								<?php //Shows error message if any ?>
 								<?= form_error('password1', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
