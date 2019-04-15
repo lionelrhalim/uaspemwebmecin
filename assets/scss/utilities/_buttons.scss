@@ -1,0 +1,33 @@
+.btn {
+    border-radius: 2rem;
+    font-weight: 600;
+}
+
+.btn-gradient-primary {
+    color: $font_light;
+    background-image: linear-gradient(to right, $gradient_button);
+    border-image: linear-gradient(to right, $gradient_button);
+    transition: all .2s ease-in-out;
+
+    &:hover {
+        color: $font_light;
+        background-image: linear-gradient(to right, $font_primary);
+        transform: scale(0.9);
+    }
+
+    &:focus {
+        color: $font_light;
+    }
+
+    &:active {
+        color: $font_light;
+    }
+}
+
+.btn-light {
+    color: $font_primary;
+
+    &:hover {
+        color: $font_secondary;
+    }
+}
