@@ -1,5 +1,10 @@
 // Background Gradient Utilities
 
+.bg-primary {
+  background-color: $color_primary !important;
+  background-image: linear-gradient(to right, $gradient_progress);
+}
+
 .bg-gradient-primary {
   background-image: linear-gradient(to right, $gradient_primary);
   background-size: cover;

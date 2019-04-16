@@ -10641,7 +10641,7 @@ h4,
 h5,
 h6,
 p {
-  color: #333333;
+  color: #555555;
 }
 
 .font-light {
@@ -10670,6 +10670,14 @@ p {
 
 .font-weight-200 {
   font-weight: 200;
+}
+
+.bg-primary {
+  background-color: #FF8965 !important;
+  background-image: -webkit-gradient(linear, left top, right top, from(#FF65a5), color-stop(#FF7381), to(#FF7D72));
+  background-image: -webkit-linear-gradient(left, #FF65a5, #FF7381, #FF7D72);
+  background-image: -o-linear-gradient(left, #FF65a5, #FF7381, #FF7D72);
+  background-image: linear-gradient(to right, #FF65a5, #FF7381, #FF7D72);
 }
 
 .bg-gradient-primary {
@@ -10807,15 +10815,15 @@ p {
 
 .btn-gradient-primary {
   color: #fff;
-  background-image: -webkit-gradient(linear, left top, right top, from(#FF65a5), color-stop(#FF7381), to(#FF8965));
-  background-image: -webkit-linear-gradient(left, #FF65a5, #FF7381, #FF8965);
-  background-image: -o-linear-gradient(left, #FF65a5, #FF7381, #FF8965);
-  background-image: linear-gradient(to right, #FF65a5, #FF7381, #FF8965);
-  -webkit-border-image: -webkit-gradient(linear, left top, right top, from(#FF65a5), color-stop(#FF7381), to(#FF8965));
-  -webkit-border-image: -webkit-linear-gradient(left, #FF65a5, #FF7381, #FF8965);
-  -o-border-image: -o-linear-gradient(left, #FF65a5, #FF7381, #FF8965);
-  border-image: -webkit-gradient(linear, left top, right top, from(#FF65a5), color-stop(#FF7381), to(#FF8965));
-  border-image: linear-gradient(to right, #FF65a5, #FF7381, #FF8965);
+  background-image: -webkit-gradient(linear, left top, right top, from(#FF7381), to(#FF8965));
+  background-image: -webkit-linear-gradient(left, #FF7381, #FF8965);
+  background-image: -o-linear-gradient(left, #FF7381, #FF8965);
+  background-image: linear-gradient(to right, #FF7381, #FF8965);
+  -webkit-border-image: -webkit-gradient(linear, left top, right top, from(#FF7381), to(#FF8965));
+  -webkit-border-image: -webkit-linear-gradient(left, #FF7381, #FF8965);
+  -o-border-image: -o-linear-gradient(left, #FF7381, #FF8965);
+  border-image: -webkit-gradient(linear, left top, right top, from(#FF7381), to(#FF8965));
+  border-image: linear-gradient(to right, #FF7381, #FF8965);
   -webkit-transition: all .2s ease-in-out;
   -o-transition: all .2s ease-in-out;
   transition: all .2s ease-in-out;
@@ -10891,7 +10899,7 @@ a:focus {
 .navbar.compressed {
   padding-top: 10px;
   padding-bottom: 10px;
-  background: #333333;
+  background: #555555;
   font-weight: 700;
   -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
@@ -10917,6 +10925,14 @@ a:focus {
 /* ---------------------------------------------------
     END OF NAVBAR STYLE
 ----------------------------------------------------- */
+.card .card-header {
+  background-image: -webkit-gradient(linear, left top, right top, from(#FF7381), to(#FF8965));
+  background-image: -webkit-linear-gradient(left, #FF7381, #FF8965);
+  background-image: -o-linear-gradient(left, #FF7381, #FF8965);
+  background-image: linear-gradient(to right, #FF7381, #FF8965);
+  color: #fff;
+}
+
 .card .card-header .dropdown {
   line-height: 1;
 }
@@ -10949,4 +10965,13 @@ a:focus {
 
 .card .card-header[data-toggle="collapse"].collapsed::after {
   content: '\f105';
+}
+
+.card .card-footer {
+  background-image: -webkit-gradient(linear, left top, right top, from(#FF7381), to(#FF8965));
+  background-image: -webkit-linear-gradient(left, #FF7381, #FF8965);
+  background-image: -o-linear-gradient(left, #FF7381, #FF8965);
+  background-image: linear-gradient(to right, #FF7381, #FF8965);
+  color: #fff;
+  font-size: 0.85rem;
 }

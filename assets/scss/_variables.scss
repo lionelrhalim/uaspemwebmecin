@@ -18,7 +18,7 @@ $bittersweet: #F7775D;
 $azalea: #F7C6D2;
 $cabaret: #CE3A77;
 
-$mine_shaft: #333333;
+$mine_shaft: #555555;
 $gallery: #efefef;
 $white: #fff !default;
 
@@ -33,13 +33,18 @@ $orange_pink,
 $salmon,
 $hot_orange;
 
-$gradient_button: $hot_pink,
-$orange_pink,
+$gradient_button: $orange_pink,
 $hot_orange;
 
 $gradient_navbar: $brink_pink,
 $orange_pink,
 $salmon;
+
+$gradient_progress: $hot_pink,
+$orange_pink,
+$salmon;
+
+$color_primary: $hot_orange;
 
 // Bootstrap Color Overrides
 $gray-100: #f8f9fc !default;

@@ -30,23 +30,60 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container my-4">
 
-        <div class="card" style="width: 18rem;">
-            <h5 class="card-header">Card title</h5>
-            <div class="text-center">
-                <img src="<?= base_url('assets/img/profile/'); ?>default.svg" class="card-img-top rounded-circle w-50"
-                    alt="...">
-            </div>
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                    card's content.</p>
-                <div class="text-center"><a href="#" class="btn btn-gradient-primary">Go somewhere</a></div>
-            </div>
-            <div class="card-footer text-muted">
-                2 days ago
+        <div class="row">
+            <div class="col">
+                <h1>Best Agents</h1>
+                <p>Take a look at our top picked agent.</p>
             </div>
         </div>
+
+        <hr class="pb-3">
+
+        <div class="row">
+            <?php
+        for($i=0;$i<3;$i++){
+            echo '
+            <div class="card mx-auto" style="width: 18rem;">
+                <h5 class="card-header font-primary">Pablo Suherman</h5>
+                <div class="text-center">
+                    <img src="'. base_url('assets/img/profile/') .'default.svg" class="card-img-top rounded-circle w-50"
+                        alt="profile_pict">
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <h6>My Skills</h6>
+
+                        Website
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 85%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                        Android Development
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                        iOS Development
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%" aria-valuenow="25"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </p>
+                    <div class="text-center"><a href="#" class="btn btn-gradient-primary">Contact</a></div>
+                </div>
+                <div class="card-footer">
+                    Last online : 2 days ago
+                </div>
+            </div>';
+        }
+        ?>
+        </div>
+
+
     </div>
 
 </main>

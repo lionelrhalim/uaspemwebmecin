@@ -1,7 +1,11 @@
 // Custom Card Styling
 
 .card {
+
   .card-header {
+
+    background-image: linear-gradient(to right, $gradient_button);
+    color: $font_light;
 
     // Format Dropdowns in Card Headings
     .dropdown {
@@ -38,5 +42,11 @@
         content: '\f105';
       }
     }
+  }
+
+  .card-footer {
+    background-image: linear-gradient(to right, $gradient_button);
+    color: $font_light;
+    font-size: 0.85rem;
   }
 }
