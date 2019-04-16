@@ -15,16 +15,21 @@ $salmon: #FF7D72;
 $hot_orange: #FF8965;
 $bittersweet: #F7775D;
 
+$light_orange: #ffc17b;
 $azalea: #F7C6D2;
 $cabaret: #CE3A77;
 
-$mine_shaft: #555555;
+$mine_shaft: #444444;
 $gallery: #efefef;
 $white: #fff !default;
 
+$off-white: #F2F3F2;
+
 $font_dark: $mine_shaft;
 $font_light: $white;
-$font_primary: $hot_orange;
+$font_off_light: $off-white;
+
+$font_primary: $bittersweet;
 $font_secondary: $brink_pink;
 
 $gradient_primary: $hot_pink,
@@ -45,6 +50,11 @@ $orange_pink,
 $salmon;
 
 $color_primary: $hot_orange;
+$color_secondary: $orange_pink;
+$color_tertiary: $light_orange;
+
+$color_light: $white;
+$color_off_light: $off-white;
 
 // Bootstrap Color Overrides
 $gray-100: #f8f9fc !default;
