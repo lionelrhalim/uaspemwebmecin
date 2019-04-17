@@ -1,7 +1,7 @@
 <!-- Footer -->
-<footer class="footer mt-auto py-3">
-    <div class="container">
-        <span class="text-muted">Place sticky footer content here.</span>
+<footer class="footer mt-3 py-3 bg-gray-200">
+    <div class="container font-dark">
+        <div class="text-center"><span>&copy; 2019 | <a href="<?= base_url(); ?>">Mecin.an</a></span></div>
     </div>
 </footer>
 <!-- End of Footer -->

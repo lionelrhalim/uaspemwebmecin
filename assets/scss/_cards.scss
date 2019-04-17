@@ -1,71 +1,60 @@
 // Custom Card Styling
 
 .card {
+  border-radius: 30px 30px 30px 30px;
 
-	border-radius: 20px 20px 20px 20px;
+  .card-header {
 
-	&:hover {
-		.card-footer {
-			background-color: $color_tertiary;
-			color: $font_light;
-		}
+    // Format Dropdowns in Card Headings
+    .dropdown {
+      line-height: 1;
 
-		.card-header {
-			background-color: $color_tertiary;
-		}
-	}
+      .dropdown-menu {
+        line-height: 1.5;
+      }
+    }
+  }
 
-	.card-header {
+  // Collapsable Card Styling
+  .card-header[data-toggle="collapse"] {
+    text-decoration: none;
+    position: relative;
+    padding: 0.75rem 3.25rem 0.75rem 1.25rem;
 
-		transition: background-color 0.3s ease-out;
-		border-radius: 20px 20px 0 0;
-		background-color: $color_secondary;
+    &::after {
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding-right: 1.725rem;
+      line-height: 51px;
+      font-weight: 900;
+      content: '\f107';
+      font-family: 'Font Awesome 5 Free';
+      color: $gray-400;
+    }
 
-		//background-image: linear-gradient(to right, $gradient_button);
-		//color: $font_light;
+    &.collapsed {
+      border-radius: $card-border-radius;
 
-		// Format Dropdowns in Card Headings
-		.dropdown {
-			line-height: 1;
+      &::after {
+        content: '\f105';
+      }
+    }
+  }
+}
 
-			.dropdown-menu {
-				line-height: 1.5;
-			}
-		}
-	}
+.profile-card {
 
-	// Collapsable Card Styling
-	.card-header[data-toggle="collapse"] {
-		text-decoration: none;
-		position: relative;
-		padding: 0.75rem 3.25rem 0.75rem 1.25rem;
+  transition: all .2s ease-in-out;
+  transform: perspective(1px) translateZ(0);
 
-		&::after {
-			position: absolute;
-			right: 0;
-			top: 0;
-			padding-right: 1.725rem;
-			line-height: 51px;
-			font-weight: 900;
-			content: '\f107';
-			font-family: 'Font Awesome 5 Free';
-			color: $gray-400;
-		}
+  &:hover {
+    transform: translateY(-8px);
+  }
 
-		&.collapsed {
-			border-radius: $card-border-radius;
+  .card-header {
+    background-color: $primary;
+    background-image: linear-gradient(-135deg, $primary 10%, $secondary);
+  }
 
-			&::after {
-				content: '\f105';
-			}
-		}
-	}
-
-	.card-footer {
-		border-radius: 0 0 20px 20px;
-		font-size: 0.85rem;
-		transition: background-color 0.3s ease-out;
-		background-color: $color_secondary;
-		color: $font_light;
-	}
 }

@@ -1,33 +1,73 @@
+// Global component styles
+
 html {
-	position: relative;
-	min-height: 100%;
+  position: relative;
+  min-height: 100%;
+  font-size: 1.15em;
 }
 
 body {
-	height: 100%;
-	font-family: $font-family-sans-serif;
+  height: 100%;
+  background-color: $off-white;
+  color: $font-dark;
 }
 
-// Fixed Navbar
-main {
-	background-color: $color_off_light;
+a {
+  &:focus {
+    outline: none;
+  }
 }
 
-main>.container-fluid {
-	padding: 70px 15px 0;
+// Main page wrapper
+#wrapper {
+  display: flex;
+
+  #content-wrapper {
+    background-color: $gray-100;
+    width: 100%;
+    overflow-x: hidden;
+
+    #content {
+      flex: 1 0 auto;
+    }
+  }
 }
 
-// Sticky footer
-.footer {
-	background-color: $color_light;
+// Set container padding to match gutter width instead of default 15px
+.container,
+.container-fluid {
+  padding-left: $grid-gutter-width;
+  padding-right: $grid-gutter-width;
 }
 
-.footer>.container {
-	padding-right: 15px;
-	padding-left: 15px;
+// Scroll to top button
+.scroll-to-top {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  display: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  text-align: center;
+  color: $white;
+  background: fade-out($gray-800, .5);
+  line-height: 46px;
+
+  &:focus,
+  &:hover {
+    color: white;
+  }
+
+  &:hover {
+    background: $gray-800;
+  }
+
+  i {
+    font-weight: 800;
+  }
 }
 
 .section-container {
-	margin-top: 5rem;
-	margin-bottom: 6rem;
+  margin-top: 5rem;
+  margin-bottom: 6rem;
 }
