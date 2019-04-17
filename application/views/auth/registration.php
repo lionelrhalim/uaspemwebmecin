@@ -13,29 +13,25 @@
 
 						<form class="user" method="post" action="<?= base_url('auth/registration'); ?>">
 							<div class="form-group">
-								<input name="name" type="name" class="form-control form-control-user" id="name"
-									placeholder="Fullname" value="<?= set_value('name') //Set value if exist ?>">
+							<input type="text" class="form-control form-control-user" id="name" name="name" placeholder="Full name" value="<?= set_value('name'); ?>">
 								<?php //Shows error message if any ?>
 								<?= form_error('name', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
 
 							<div class="form-group">
-								<input name="email" type="name" class="form-control form-control-user" id="email"
-									placeholder="Email Address" value="<?= set_value('email') //Set value if exist ?>">
+							<input type="text" class="form-control form-control-user" id="email" name="email" placeholder="Email Address" value="<?= set_value('email'); ?>">
 								<?php //Shows error message if any ?>
 								<?= form_error('email', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
 
-							<div class="form-group">
-								<input name="password1" type="password" class="form-control form-control-user"
-									id="password1" placeholder="Password">
-							</div>
-
-							<div class="form-group">
-								<input name="password2" type="password" class="form-control form-control-user"
-									id="password2" placeholder="Repeat Password">
-								<?php //Shows error message if any ?>
-								<?= form_error('password1', '<small class="text-danger pl-3">* ', '</small>'); ?>
+							<div class="form-group row">
+								<div class="col-sm-6 mb-3 mb-sm-0">
+									<input type="password" class="form-control form-control-user" id="password1" name="password1" placeholder="Password">
+									<?= form_error('password1', '<small class="text-danger pl-3">', '</small>'); ?>
+								</div>
+								<div class="col-sm-6">
+									<input type="password" class="form-control form-control-user" id="password2" name="password2" placeholder="Repeat Password">
+								</div>
 							</div>
 
 							<button type="submit" class="btn btn-primary btn-user btn-block">
@@ -55,7 +51,7 @@
 						<hr>
 
 						<div class="text-center">
-							<a class="small" href="forgot-password.html">Forgot Password?</a>
+							<a class="small" href="<?= base_url('auth/forgotpassword'); ?>">Forgot Password?</a>
 						</div>
 						<div class="text-center">
 							<a class="small" href="<?= base_url('auth'); ?>">Already have an account? Login!</a>

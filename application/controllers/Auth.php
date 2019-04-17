@@ -19,12 +19,17 @@ class Auth extends CI_Controller {
 
         parent::__construct();
         $this->load->library('form_validation');    // Load 'form_validation'
+        
     }
 
 
 
     // Default method
     public function index() {
+        //apabila sudah login tidak bisa balik ke auth
+        if($this->session->userdata('email')){
+            redirect('user');
+        }
         
         // Set rules for 'form_validation'
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
@@ -127,6 +132,10 @@ class Auth extends CI_Controller {
 
     // Registration method
     public function registration() {
+        //apabila sudah login tidak bisa balik ke auth
+        if($this->session->userdata('email')){
+            redirect('user');
+        }
 
         // Set rules for 'form_validation'
         $this->form_validation->set_rules('name', 'Name', 'required|trim');
@@ -148,18 +157,31 @@ class Auth extends CI_Controller {
         } else {
 
             // Else retreive form input
+            $email = $this->input->post('email', true);
             $data = [
                 'name' => htmlspecialchars($this->input->post('name', true)),
-                'email' => htmlspecialchars($this->input->post('email', true)),
+                'email' => htmlspecialchars($email),
                 'image' => 'default.jpg',
                 'password' => password_hash( $this->input->post('password1'), PASSWORD_DEFAULT ),
                 'role_id' => 2,
-                'is_active' => 1,
+                'is_active' => 0,
                 'date_created' => time()
             ];
 
+            //siapkan token berupa bilangan random 32 digit
+            $token = base64_encode(random_bytes(32));
+            $user_token = [
+                'email' => $email,
+                'token' => $token,
+                'date_created' => time()
+            ];
+            
             // Query to database
             $this->db->insert('user', $data);
+            $this->db->insert('user_token', $user_token);
+            
+            //ngirim email dengan menyertakan token untuk verify
+            $this->_sendEmail($token, 'verify');
 
             $this->session->set_flashdata(
                 'message',
@@ -174,6 +196,112 @@ class Auth extends CI_Controller {
         }
     }
 
+    // Private _sendEmail() function
+    private function _sendEmail($token, $type){
+        $config = [
+            'protocol'  => 'smtp',
+            'smtp_host' => 'ssl://smtp.googlemail.com',
+            'smtp_user' => 'noreply.mecinan@gmail.com',
+            'smtp_pass' => 'uaspemwebmecin',
+            'smtp_port' => 465, //port smtp google
+            'mailtype'  => 'html',
+            'charset'   => 'utf-8',
+            'newline'   => "\r\n"
+        ];
+
+        //$this->load->library('email', $config);
+        $this->email->initialize($config);
+
+        //set ingin kirim darimana
+        $this->email->from('noreply.mecinan@gmail.com', 'Mecin.an');
+        
+        //set ingin kirim kemana
+        $this->email->to($this->input->post('email'));
+        
+        if ($type == 'verify') {
+            $this->email->subject('Account Verification');
+            $this->email->message('Click this link to verify you account : <a href="' . base_url() . 'auth/verify?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Activate</a>');
+        } else if ($type == 'forgot') {
+            $this->email->subject('Reset Password');
+            $this->email->message('Click this link to reset your password : <a href="' . base_url() . 'auth/resetpassword?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Reset Password</a>');
+        }
+
+        if ($this->email->send()) {
+            return true;
+        } else {
+            echo $this->email->print_debugger();
+            die;
+        }
+    }
+
+    // Verify method
+    public function verify(){
+        $email = $this->input->get('email');
+        $token = $this->input->get('token');
+
+        $user = $this->db->get_where('user', ['email' => $email])->row_array();
+        
+        //jika usernya ada
+        if ($user) {
+            $user_token = $this->db->get_where('user_token', ['token' => $token])->row_array();
+           
+            //jika tokennya ada
+            if ($user_token) {
+                //token berlaku hanya selama 1 hari
+                if (time() - $user_token['date_created'] < (60 * 60 * 24)) {
+                    $this->db->set('is_active', 1);
+                    $this->db->where('email', $email);
+                    $this->db->update('user');
+                    $this->db->delete('user_token', ['email' => $email]);
+                    $this->session->set_flashdata('message', 
+                        '<div class="alert alert-success" role="alert">' 
+                            . '<small>' . $email . ' has been activated! Please login. </small>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>'
+                    );
+                    redirect('auth');
+                } else {
+                    //apabila token sudah lebih dari 1 hari dan belum melakukan verify 
+                    //maka token di hapus
+                    $this->db->delete('user', ['email' => $email]);
+                    $this->db->delete('user_token', ['email' => $email]);
+                    $this->session->set_flashdata('message', 
+                        '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <small>Account activation failed! Token expired.</small>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>'
+                    );
+                    redirect('auth');
+                }
+            } else {
+                //jika tokennya tidak ada
+                $this->session->set_flashdata('message', 
+                    '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <small>Account activation failed! Wrong token.</small>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>'
+                );
+                redirect('auth');
+            }
+        } else {
+            //apabila user tidak ada
+            $this->session->set_flashdata('message', 
+                '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <small>Account activation failed! Wrong email.</small>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>'
+            );
+            redirect('auth');
+        }
+    }
 
 
     // Logout method
@@ -194,4 +322,135 @@ class Auth extends CI_Controller {
         );
         redirect('auth');
     }
+
+
+    // Blocked method
+    public function blocked(){
+        //echo "access blocked";
+        //tolong buat view untuk blocked ya
+        $this->load->view('auth/blocked');
+    }
+
+    // ForgotPassword method
+    public function forgotPassword(){
+        
+        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+        
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Forgot Password';
+            $this->load->view('templates/auth_header', $data);
+            $this->load->view('auth/forgot-password');
+            $this->load->view('templates/auth_footer');
+        } else {
+            $email = $this->input->post('email');
+            $user = $this->db->get_where('user', ['email' => $email, 'is_active' => 1])->row_array();
+            
+            if ($user) {
+                //token untuk forgotpassword
+                $token = base64_encode(random_bytes(32));
+                $user_token = [
+                    'email' => $email,
+                    'token' => $token,
+                    'date_created' => time()
+                ];
+                $this->db->insert('user_token', $user_token);
+                $this->_sendEmail($token, 'forgot');
+                $this->session->set_flashdata('message', 
+                    '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <small>Please check your email to reset your password!</small>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>'
+                );
+                redirect('auth/forgotpassword');
+            } else {
+                $this->session->set_flashdata('message', 
+                    '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <small>Email is not registered or activated!<small>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>'
+                );
+                redirect('auth/forgotpassword');
+            }
+        }
+    }
+
+    //ResetPassword method
+    public function resetPassword(){
+        $email = $this->input->get('email');
+        $token = $this->input->get('token');
+
+        $user = $this->db->get_where('user', ['email' => $email])->row_array();
+        
+        if ($user) {
+            $user_token = $this->db->get_where('user_token', ['token' => $token])->row_array();
+           
+            if ($user_token) {
+                $this->session->set_userdata('reset_email', $email);
+                $this->changePassword();
+            } else {
+                $this->session->set_flashdata('message', 
+                    '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <small>Reset password failed! Wrong token.</small>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>'
+                );
+                redirect('auth');
+            }
+        } else {
+            $this->session->set_flashdata('message', 
+                '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <small>Reset password failed! Wrong email.</small>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>'
+            );
+            redirect('auth');
+        }
+    }
+
+    //ChangePassword method
+    public function changePassword(){
+        
+        if (!$this->session->userdata('reset_email')) {
+            redirect('auth');
+        }
+
+        $this->form_validation->set_rules('password1', 'Password', 'trim|required|min_length[8]|matches[password2]');
+        $this->form_validation->set_rules('password2', 'Repeat Password', 'trim|required|min_length[8]|matches[password1]');
+        
+        if ($this->form_validation->run() == false) {
+            $data['title'] = 'Change Password';
+            $this->load->view('templates/auth_header', $data);
+            $this->load->view('auth/change-password');
+            $this->load->view('templates/auth_footer');
+        } else {
+            $password = password_hash($this->input->post('password1'), PASSWORD_DEFAULT);
+            $email = $this->session->userdata('reset_email');
+
+            $this->db->set('password', $password);
+            $this->db->where('email', $email);
+            $this->db->update('user');
+
+            //hapus session sebelum balik ke login
+            $this->session->unset_userdata('reset_email');
+            $this->db->delete('user_token', ['email' => $email]);
+            $this->session->set_flashdata('message', 
+                '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <small>Password has been changed! Please login.</small>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>'
+            );
+            redirect('auth');
+        }
+    }
+
 }

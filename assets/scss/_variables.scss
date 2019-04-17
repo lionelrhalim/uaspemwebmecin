@@ -1,10 +1,62 @@
-// Override Bootstrap default variables here
-// Do not edit any of the files in /vendor/bootstrap/scss/!
+@import url('https://fonts.googleapis.com/css?family=Montserrat:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i');
 
-// Color Variables
-// Bootstrap Color Overrides
+/*******************/
+/* Color Variables */
+/*******************/
 
+// Custom Colors
+$brand-google: #ea4335;
+$brand-facebook: #3b5998;
+
+$hot_pink: #FF65a5;
+$brink_pink: #FF6A92;
+$orange_pink: #FF7381;
+$salmon: #FF7D72;
+$hot_orange: #FF8965;
+$bittersweet: #F7775D;
+
+$light_orange: #ffc17b;
+$azalea: #F7C6D2;
+$cabaret: #CE3A77;
+
+$mine_shaft: #444444;
+$gallery: #efefef;
 $white: #fff !default;
+
+$off-white: #F2F3F2;
+
+$font_dark: $mine_shaft;
+$font_light: $white;
+$font_off_light: $off-white;
+
+$font_primary: $bittersweet;
+$font_secondary: $brink_pink;
+
+$gradient_primary: $hot_pink,
+$brink_pink,
+$orange_pink,
+$salmon,
+$hot_orange;
+
+$gradient_button: $orange_pink,
+$hot_orange;
+
+$gradient_navbar: $brink_pink,
+$orange_pink,
+$salmon;
+
+$gradient_progress: $hot_pink,
+$orange_pink,
+$salmon;
+
+$color_primary: $hot_orange;
+$color_secondary: $orange_pink;
+$color_tertiary: $light_orange;
+
+$color_light: $white;
+$color_off_light: $off-white;
+
+// Bootstrap Color Overrides
 $gray-100: #f8f9fc !default;
 $gray-200: #eaecf4 !default;
 $gray-300: #dddfeb !default;
@@ -16,20 +68,16 @@ $gray-800: #5a5c69 !default;
 $gray-900: #3a3b45 !default;
 $black: #000 !default;
 
-$blue: #4e73df !default;
+$blue: #6D68FD !default; //rename
 $indigo: #6610f2 !default;
 $purple: #6f42c1 !default;
-$pink: #e83e8c !default;
-$red: #e74a3b !default;
-$orange: #fd7e14 !default;
+$pink: $brink_pink !default;
+$red: #FF315D !default; //rename
+$orange: $hot_orange !default;
 $yellow: #f6c23e !default;
 $green: #1cc88a !default;
 $teal: #20c9a6 !default;
 $cyan: #36b9cc !default;
-
-// Custom Colors
-$brand-google: #ea4335;
-$brand-facebook: #3b5998;
 
 // Set Contrast Threshold
 $yiq-contrasted-threshold: 195 !default;
