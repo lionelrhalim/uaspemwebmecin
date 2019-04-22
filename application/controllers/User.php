@@ -24,11 +24,91 @@ class User extends CI_Controller {
     public function index() {
         $data['title'] = "My Profile";
         $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
-        
+
+        $data['field'] = $this->db->get('field_category')->result_array();
+        $data['job'] = $this->db->get('job_category')->result_array();
+        $data['createproject'] = $this->db->get('createproject')->result_array();
+
+        $this->form_validation->set_rules('projectname', 'Project Nmae', 'required');
+        $this->form_validation->set_rules('desc', 'Description', 'required');
+        $this->form_validation->set_rules('field_category', 'Field Category', 'required');
+        $this->form_validation->set_rules('job_category', 'Job Category', 'required');
+        $this->form_validation->set_rules('times', 'Times', 'required');
+        $this->form_validation->set_rules('price', 'Price', 'required');
+
+        if($this->form_validation->run() == false){
+            $this->load->view('templates/user_header', $data);
+            //$this->load->view('templates/user_sidebar', $data);
+            $this->load->view('templates/user_topbar', $data);
+            $this->load->view('templates/user_navbar', $data);
+            $this->load->view('user/index', $data);
+            $this->load->view('templates/user_footer', $data);
+        }else{
+            $status = 0;
+            $presentase = 0;
+            $user_id = $data['user']['id'];
+            $username = $data['user']['name'];
+            $email = $data['user']['email'];
+
+            $data = [
+                'user_id' => $user_id,
+                'username' => $username,
+                'email' => $email,
+                'project_name' => $this->input->post('projectname'),
+                'times' => $this->input->post('times'),
+                'field_category' => $this->input->post('field_category'),
+                'job_category' => $this->input->post('job_category'),
+                'price' => $this->input->post('price'),
+                'status' => $status,
+                'presentase' => $presentase,
+                'description' => $this->input->post('desc')
+            ];
+
+            $this->db->insert('createproject', $data);
+
+            // if($this->input->post('submitDone') != null){
+            //     echo"lalala";
+            //     $projectname = $this->input->post('projectname');
+            //     $this->db->set('status', 1);
+            //     $this->db->where('project_name', $projectname);
+            //     $this->db->update('createproject');
+            // }
+
+            $this->session->set_flashdata(
+                'message',
+                '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <small>New Project Added</small>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>'
+            );
+            redirect('user');
+        }
+    }
+
+    public function updateStatus(){
+        $projectname = $this->input->post('projectname');
+
+        if(isset($_POST['submitDone'])){
+            echo "abc";
+            $this->db->set('status', 1);
+            $this->db->where('status', 0);
+            $this->db->where('project_name', $projectname);
+            $this->db->update('createproject');
+        }
+
+        redirect('user/');
+    }
+
+    public function visitProfile($user_id){
+        $data['title'] = "Visit Profile";
+        $data['user'] = $this->db->get_where( 'user', ['id' => $user_id] )->row_array();
+
         $this->load->view('templates/user_header', $data);
         $this->load->view('templates/user_sidebar', $data);
         $this->load->view('templates/user_topbar', $data);
-        $this->load->view('user/index', $data);
+        $this->load->view('user/visit-profile', $data);
         $this->load->view('templates/user_footer', $data);
     }
 
@@ -38,6 +118,7 @@ class User extends CI_Controller {
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
         
         $this->form_validation->set_rules('name', 'Full Name', 'required|trim');
+        $this->form_validation->set_rules('description', 'Description', 'trim');
         
         if ($this->form_validation->run() == false) {
             $this->load->view('templates/user_header', $data);
@@ -48,6 +129,8 @@ class User extends CI_Controller {
         } else {
             $name = $this->input->post('name');
             $email = $this->input->post('email');
+            $description = $this->input->post('description');
+
 
             // cek jika ada gambar yang akan diupload
             $upload_image = $_FILES['image']['name'];
@@ -73,7 +156,9 @@ class User extends CI_Controller {
                     echo $this->upload->dispay_errors();
                 }
             }
+
             $this->db->set('name', $name);
+            $this->db->set('description', $description);
             $this->db->where('email', $email);
             $this->db->update('user');
             $this->session->set_flashdata('message', 
@@ -145,5 +230,29 @@ class User extends CI_Controller {
                 }
             }
         }
+    }
+
+    public function ongoing(){
+        $data['title'] = 'Ongoing Project';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['createproject'] = $this->db->get('createproject')->result_array();
+
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_sidebar', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('user/ongoing', $data);
+        $this->load->view('templates/user_footer', $data);
+    }
+
+    public function past(){
+        $data['title'] = 'Past Project';
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+        $data['createproject'] = $this->db->get('createproject')->result_array();
+        
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_sidebar', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('user/pastproject', $data);
+        $this->load->view('templates/user_footer', $data);
     }
 }

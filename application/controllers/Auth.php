@@ -26,7 +26,8 @@ class Auth extends CI_Controller {
 
     // Default method
     public function index() {
-        //apabila sudah login tidak bisa balik ke auth
+
+        // If logged in, redirect to 'user'
         if($this->session->userdata('email')){
             redirect('user');
         }
@@ -244,7 +245,7 @@ class Auth extends CI_Controller {
         //jika usernya ada
         if ($user) {
             $user_token = $this->db->get_where('user_token', ['token' => $token])->row_array();
-           
+        
             //jika tokennya ada
             if ($user_token) {
                 //token berlaku hanya selama 1 hari

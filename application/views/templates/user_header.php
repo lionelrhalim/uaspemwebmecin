@@ -21,5 +21,5 @@
 
 <body id="page-top">
 
-    <!-- Page Wrapper -->
+    <?php ## PAGE WRAPPER ## ?>
     <div id="wrapper">
