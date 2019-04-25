@@ -3,18 +3,16 @@
         $role_id = $this->session->userdata('role_id');
         $queryMenu = "SELECT `user_navbar`.*
                 FROM `user_navbar` JOIN `user_access_navbar`
-                  ON `user_navbar`.`id` = `user_access_navbar`.`navbar_id`
-               WHERE `user_access_navbar`.`role_id` = $role_id
+                ON `user_navbar`.`id` = `user_access_navbar`.`navbar_id`
+                WHERE `user_access_navbar`.`role_id` = $role_id
             ORDER BY `user_access_navbar`.`role_id` ASC
             ";
 
         $queryNavBar = "SELECT * FROM user_navbar";
 
         $navBar = $this->db->query($queryMenu)->result_array();
-
-        var_dump($navBar);
     ?>
-    
+
     <?php ## NAVBAR ## ?>
     <nav class="navbar navbar-expand-md static-top navbar-light bg-white shadow d-none d-md-block"
         style="margin-top:80px;">
@@ -25,17 +23,22 @@
                     <?php foreach($navBar as $nb) : ?>
 
                     <?php if($title == $nb['title']) : ?>
-                        <li class="nav-item active active-primary">
+                    <li class="nav-item active active-primary">
 
+                    <?php else : ?>
+                    <li class="nav-item">
+                    <?php endif; ?>
+
+                        <?php if($nb['title'] == 'Profile') : ?>
+                        <a class="nav-link" href="<?= base_url('user/'.$nb['url'].'?id='.$user['id']); ?>">
+                            
                         <?php else : ?>
-                        <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('user/'.$nb['url']); ?>">
                         <?php endif; ?>
-
-                            <a class="nav-link" href="<?= base_url('user/'.$nb['url']); ?>">
-                                <?= $nb['title']; ?>
-                            </a>
-
-                        </li>
+                        
+                            <?= $nb['title']; ?>                    
+                        </a>
+                    </li>
                     <?php endforeach; ?>
 
                     <!--

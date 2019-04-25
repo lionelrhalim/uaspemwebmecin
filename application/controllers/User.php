@@ -102,12 +102,15 @@ class User extends CI_Controller {
     }
 
     public function profile(){
-        $data['title'] = "Visit Profile";
+        $user_id = $this->input->get('id');
+
+        $data['title'] = "Profile";
         $data['user'] = $this->db->get_where( 'user', ['id' => $user_id] )->row_array();
 
         $this->load->view('templates/user_header', $data);
         //$this->load->view('templates/user_sidebar', $data);
         $this->load->view('templates/user_topbar', $data);
+        $this->load->view('templates/user_navbar', $data);
         $this->load->view('user/profile', $data);
         $this->load->view('templates/user_footer', $data);
     }
@@ -154,7 +157,7 @@ class User extends CI_Controller {
                     //set untuk dimasukan ke db new_imagenya
                     $this->db->set('image', $new_image);
                 } else {
-                    echo $this->upload->dispay_errors();
+                    echo $this->upload->display_errors();
                 }
             }
 
@@ -178,7 +181,7 @@ class User extends CI_Controller {
     public function changePassword(){
         $data['title'] = 'Change Password';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-       
+
         $this->form_validation->set_rules('current_password', 'Current Password', 'required|trim');
         $this->form_validation->set_rules('new_password1', 'New Password', 'required|trim|min_length[8]|matches[new_password2]');
         $this->form_validation->set_rules('new_password2', 'Confirm New Password', 'required|trim|min_length[8]|matches[new_password1]');
@@ -214,7 +217,7 @@ class User extends CI_Controller {
                 } else {
                     // password sudah ok
                     $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-                   
+
                     $this->db->set('password', $password_hash);
                     $this->db->where('email', $this->session->userdata('email'));
                     $this->db->update('user');
