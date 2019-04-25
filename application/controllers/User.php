@@ -101,14 +101,14 @@ class User extends CI_Controller {
         redirect('user/');
     }
 
-    public function visitProfile($user_id){
+    public function profile(){
         $data['title'] = "Visit Profile";
         $data['user'] = $this->db->get_where( 'user', ['id' => $user_id] )->row_array();
 
         $this->load->view('templates/user_header', $data);
-        $this->load->view('templates/user_sidebar', $data);
+        //$this->load->view('templates/user_sidebar', $data);
         $this->load->view('templates/user_topbar', $data);
-        $this->load->view('user/visit-profile', $data);
+        $this->load->view('user/profile', $data);
         $this->load->view('templates/user_footer', $data);
     }
 

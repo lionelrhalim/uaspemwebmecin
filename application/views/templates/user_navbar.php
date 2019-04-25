@@ -1,7 +1,7 @@
     <?php ## GET QUERY NAVBAR LIST
 
         $role_id = $this->session->userdata('role_id');
-        $queryMenu = "SELECT `user_navbar`.`id`, `title`, 'url'
+        $queryMenu = "SELECT `user_navbar`.*
                 FROM `user_navbar` JOIN `user_access_navbar`
                   ON `user_navbar`.`id` = `user_access_navbar`.`navbar_id`
                WHERE `user_access_navbar`.`role_id` = $role_id
@@ -11,6 +11,8 @@
         $queryNavBar = "SELECT * FROM user_navbar";
 
         $navBar = $this->db->query($queryMenu)->result_array();
+
+        var_dump($navBar);
     ?>
     
     <?php ## NAVBAR ## ?>
@@ -29,7 +31,7 @@
                         <li class="nav-item">
                         <?php endif; ?>
 
-                            <a class="nav-link" href="<?= base_url($nb['url']); ?>">
+                            <a class="nav-link" href="<?= base_url('user/'.$nb['url']); ?>">
                                 <?= $nb['title']; ?>
                             </a>
 
