@@ -22,7 +22,7 @@ class User extends CI_Controller {
     }
 
     public function index() {
-        $data['title'] = "My Profile";
+        $data['title'] = "Dashboard";
         $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
 
         $data['field'] = $this->db->get('field_category')->result_array();
@@ -122,8 +122,9 @@ class User extends CI_Controller {
         
         if ($this->form_validation->run() == false) {
             $this->load->view('templates/user_header', $data);
-            $this->load->view('templates/user_sidebar', $data);
+            //$this->load->view('templates/user_sidebar', $data);
             $this->load->view('templates/user_topbar', $data);
+            $this->load->view('templates/user_navbar', $data);
             $this->load->view('user/edit', $data);
             $this->load->view('templates/user_footer', $data);
         } else {

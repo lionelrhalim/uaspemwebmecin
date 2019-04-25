@@ -100,7 +100,7 @@
                     </ol>
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <img src="https://via.placeholder.com/1920x300?text=Promo 1" class="d-block w-100"
+                            <img src="https://via.placeholder.com/1920x300?text=Dijual Lionel" class="d-block w-100"
                                 alt="...">
                         </div>
                         <div class="carousel-item">
@@ -241,12 +241,12 @@
 
 
         <?php ## THIRD ROW ## ?>
-        <div class="row">
+        <div class="row align-items-center">
 
             <?php ## Propose Form ## ?>
             <div class="col-6">
                 <?php ## Card Heading ## ?>
-                <div class="col-12">
+                <div class="col-12 text-center">
                     <h2 class="mb-4 text-gray-600">Need profesional work?</h2>
                 </div>
 
@@ -269,7 +269,7 @@
                                     <div class="form-group">
                                         <label for="desc"><strong>Tell us more</strong></label>
                                         <textarea class="form-control" id="desc" name="desc"
-                                            placeholder="Describe your project..."></textarea>
+                                            style="resize:none;" rows="5" placeholder="Describe your project..."></textarea>
                                     </div>
 
                                     <div class="form-group">

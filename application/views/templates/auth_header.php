@@ -17,6 +17,8 @@
 	<!-- Custom styles for this template-->
 	<link href="<?= base_url('assets/'); ?>css/mecin.css" rel="stylesheet">
 
+	<link rel="icon" href="<?= base_url('assets/img/logo/')?>fav.png" sizes="any" type="image/png">
+
 </head>
 
 <body>
