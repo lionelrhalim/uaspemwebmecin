@@ -141,17 +141,24 @@
 
             <div class="card-deck mx-auto">
                 <?php
-                for($i=0;$i<3;$i++){
+
+                $query = "SELECT id, name, image FROM user";
+        
+                $result = $this->db->query($query)->result_array();
+
+                //var_dump($result);
+
+                foreach($result as $row){
                     echo '
                     <div class="card o-hidden shadow-sm  my-3 profile-card" style="width: 18rem;">
                         <div class="card-header"></div>
                         <div class="text-center">
-                            <img src="'. base_url('assets/img/profile/') .'default.svg" class="card-img-top rounded-circle w-50"
+                            <img src="'. base_url('assets/img/profile/') . $row['image'] .'" class="card-img-top w-50"
                                 alt="profile_pict">
                         </div>
                         <div class="card-body">
                             <p class="card-text">
-                                <h5 class="text-center font-weight-600 mb-4">Pablo <strong>Suherman</strong></h5>
+                                <h5 class="text-center font-weight-600 mb-4">'. $row['name'] .'</h5>
                                 <div>
                                     Website
                                     <div class="progress mb-2">
@@ -177,7 +184,7 @@
                                 </div>
         
                             </p>
-                            <div class="text-center mt-4"><a href="#" class="btn btn-primary-custom px-4">Contact</a></div>
+                            <div class="text-center mt-4"><a href="'. base_url('user/profile?id='.$row['id']) .'" class="btn btn-primary-custom px-4">Contact</a></div>
                         </div>
                     </div>';
                 }
