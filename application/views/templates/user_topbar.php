@@ -9,7 +9,7 @@
         <nav class="navbar navbar-expand navbar-light bg-white topbar fixed-top border-bottom">
 
             <?php ## Logo ## ?>
-            <a class="navbar-brand d-none d-md-block" href="<?= base_url(); ?>">
+            <a class="navbar-brand d-none d-md-block" href="<?= base_url('user/'); ?>">
                 <img src="<?= base_url('assets/img/logo/'); ?>logo-wide.svg" class="d-inline-block align-middle" alt=""
                     style="width: 100%;">
             </a>
@@ -180,6 +180,8 @@
 
                 <div class="topbar-divider d-none d-sm-block"></div>
 
+                
+                
                 <?php ## User Information ## ?>
                 <li class="nav-item dropdown no-arrow">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
@@ -193,7 +195,7 @@
                     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                         aria-labelledby="userDropdown">
 
-                        <a class="dropdown-item" href="<?= base_url('user/edit') ?>">
+                        <a class="dropdown-item" href="<?= base_url('user/profile?id='.$user['id']); ?>">
                             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                             My Profile
                         </a>

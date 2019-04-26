@@ -19,6 +19,7 @@ class User extends CI_Controller {
 
         parent::__construct();
         is_logged_in();
+        $this->load->model('User_model', 'model_user');
     }
 
     public function index() {
@@ -27,7 +28,7 @@ class User extends CI_Controller {
 
         $data['field'] = $this->db->get('field_category')->result_array();
         $data['job'] = $this->db->get('job_category')->result_array();
-        $data['createproject'] = $this->db->get('createproject')->result_array();
+        //$data['createproject'] = $this->db->get('project')->result_array();
 
         $this->form_validation->set_rules('projectname', 'Project Nmae', 'required');
         $this->form_validation->set_rules('desc', 'Description', 'required');
@@ -38,33 +39,28 @@ class User extends CI_Controller {
 
         if($this->form_validation->run() == false){
             $this->load->view('templates/user_header', $data);
-            //$this->load->view('templates/user_sidebar', $data);
             $this->load->view('templates/user_topbar', $data);
             $this->load->view('templates/user_navbar', $data);
             $this->load->view('user/index', $data);
             $this->load->view('templates/user_footer', $data);
         }else{
             $status = 0;
-            $presentase = 0;
-            $user_id = $data['user']['id'];
-            $username = $data['user']['name'];
-            $email = $data['user']['email'];
+            $employer_id = $data['user']['id'];
+            $agent_id = $this->input->get('id');
 
             $data = [
-                'user_id' => $user_id,
-                'username' => $username,
-                'email' => $email,
-                'project_name' => $this->input->post('projectname'),
-                'times' => $this->input->post('times'),
-                'field_category' => $this->input->post('field_category'),
-                'job_category' => $this->input->post('job_category'),
-                'price' => $this->input->post('price'),
+                'project_name' => $this->input->post('projectname', TRUE),
+                'field_category' => $this->input->post('field_category', TRUE),
+                'job_category' => $this->input->post('job_category', TRUE),
+                'deadline' => $this->input->post('times', TRUE),
+                'bid' => $this->input->post('price', TRUE),
+                'description' => $this->input->post('desc', TRUE),
                 'status' => $status,
-                'presentase' => $presentase,
-                'description' => $this->input->post('desc')
+                'employer_id' => $employer_id,
+                'agent_id' => $agent_id,
             ];
 
-            $this->db->insert('createproject', $data);
+            $this->db->insert('project', $data);
 
             // if($this->input->post('submitDone') != null){
             //     echo"lalala";
@@ -77,7 +73,7 @@ class User extends CI_Controller {
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <small>New Project Added</small>
+                    <small>Your Project Has Been Proposed</small>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -101,21 +97,84 @@ class User extends CI_Controller {
         redirect('user/');
     }
 
+
+
+    /*
+     * Name = profile() method
+     * Description
+     *      To load information for profile view
+    */
     public function profile(){
-        $user_id = $this->input->get('id');
 
-        $data['title'] = "Profile";
-        $data['user'] = $this->db->get_where( 'user', ['id' => $user_id] )->row_array();
+        $get_id = $this->input->get('id');
+        $sid = $this->session->userdata('id');
 
-        $this->load->view('templates/user_header', $data);
-        //$this->load->view('templates/user_sidebar', $data);
-        $this->load->view('templates/user_topbar', $data);
-        $this->load->view('templates/user_navbar', $data);
-        $this->load->view('user/profile', $data);
-        $this->load->view('templates/user_footer', $data);
+        $result = $this->model_user->get_user_profile($sid);
+        $data['user'] = $result;
+        $data['user']['id'] = $sid;
+
+        // User viewing their own profile
+        if ($get_id === $sid) {
+            
+            // Heading data
+            $data['title'] = "Profile";
+            $data['card_title'] = "Profile Info";
+            
+            // Load the heading
+            $this->load->view('templates/user_header', $data);
+            $this->load->view('templates/user_topbar', $data);
+            $this->load->view('templates/user_navbar', $data);
+
+            // Additional data
+            $data['user']['headline'] = null;
+
+            // Load the view
+            $this->load->view('user/profile', $data);
+            
+            // Load the footer
+            $this->load->view('templates/user_footer', $data);
+
+        } 
+        
+        // User viewing agent details
+        else {
+            
+            // Heading data
+            $data['title'] = "Browse";
+            $data['card_title'] = "Agent Details";
+
+            // Load the heading
+            $this->load->view('templates/user_header', $data);
+            $this->load->view('templates/user_topbar', $data);
+            $this->load->view('templates/user_navbar', $data);
+
+            // Load the agent profile data
+            $result = $this->model_user->get_agent_profile($get_id);
+            $data['user'] = $result['profile'];
+            $data['field'] = $result['field'];
+            $data['job'] = $result['job'];
+            $data['skill'] = $result['skill'];
+
+            // Additional data
+            $data['user']['email'] = null;
+            $data['user']['is_dev'] = 1;
+
+            // Load the view
+            $this->load->view('user/profile', $data);
+
+            // Load the footer
+            $this->load->view('templates/user_footer', $data);
+
+        }
     }
 
-    //Edit method
+
+
+    /*
+     * Name = edit() method
+     * Description
+     *      To load information for profile view
+    */
     public function edit(){
         $data['title'] = 'Edit Profile';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();

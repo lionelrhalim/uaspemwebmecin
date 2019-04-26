@@ -66,7 +66,6 @@
                             </div>
                             <h5 class="card-title"><?= $user['name']; ?></h5>
                             <p class="card-text"><?= $user['email']; ?></p>
-                            <p class="card-text"><?= $user['description']; ?></p>
                             <p class="card-text"><small class="text-muted">Member since
                                     <?= date('d F Y', $user['date_created']); ?></small></p>
                         </div>
@@ -190,53 +189,6 @@
                 }
                 ?>
             </div>
-
-
-            <!-- query my project -->
-            <!-- <?php
-                    $email = $user['email'];
-                    $queryMyProject = "SELECT * FROM `createproject`
-                                        WHERE `email` = '$email'
-                                    ";
-    
-                    $myproject = $this->db->query($queryMyProject)->result_array();
-                ?> -->
-
-            <!--looping my project -->
-            <!-- <?php foreach($myproject as $mp) : ?>
-            <div class="card o-hidden shadow-sm mx-auto my-3 profile-card" style="width: 18rem;">
-                <div class="card-header"></div>
-                <div class="card-body">
-                    <p class="card-text">
-                        <h5 class="text-center font-weight-600 mb-4"><strong><?=$mp['project_name']?></strong></h5>
-                        <h6 class="text-center font-weight-600 mb-4"><strong><?=$mp['description']?></strong></h6>
-                        <div>
-                            <?=$mp['field_category']?>
-                        </div>
-
-                        <div>
-                            <?=$mp['job_category']?>
-                        </div>
-
-                        <div>
-                            <?=$mp['times']?> Times
-                        </div>
-
-                        <div>
-                            <?=$mp['price']?>
-                        </div>
-
-                    </p>
-
-                    <div class="text-center mt-4">
-                        <form method="POST" action="<?= base_url('user/updateStatus'); ?>">
-                            <input type="hidden" id="projectname" name="projectname" value="<?= $mp['project_name'] ?>">
-                            <button type="submit" name="submitDone" class="btn btn-primary-custom px-4">Done</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; ?> -->
 
         </div>
         <?php ## END OF TOP AGENTS ROW ## ?>
