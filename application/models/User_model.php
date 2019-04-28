@@ -136,17 +136,30 @@ class User_model extends CI_Model{
         $this->db->select("*");
         $this->db->from('inbox');
         $this->db->where('inbox.user_id', $user_id);
+        $this->db->order_by('inbox_date', 'DESC');
         $result = $this->db->get();
 
         return $result->result_array();
     }
 
-    public function set_inbox($inbox_title, $inbox_description, $project_id, $user_id) {
+    public function get_unread_inbox($user_id) {
+        $this->db->select("*");
+        $this->db->from('inbox');
+        $this->db->where('inbox.user_id', $user_id);
+        $this->db->where('inbox.inbox_status', 0);
+        $this->db->order_by('inbox_date', 'DESC');
+        $result = $this->db->get();
+
+        return $result->result_array();
+    }
+
+    public function set_inbox($inbox_title, $inbox_description, $project_id, $user_id, $from_id) {
         $this->db->trans_begin();
         $this->db->set('inbox_title', $inbox_title);
         $this->db->set('inbox_description', $inbox_description);
         $this->db->set('project_id', $project_id);
         $this->db->set('user_id', $user_id);
+        $this->db->set('from_id', $from_id);
         $this->db->insert('inbox');
 		$this->db->trans_complete();
 
@@ -171,5 +184,21 @@ class User_model extends CI_Model{
         $result = $this->db->get();
 
         return $result->result_array();
+    }
+
+    public function update_inbox_status($status, $inbox_id) {
+        $this->db->trans_begin();
+        $this->db->set('inbox_status', $status);
+        $this->db->where('inbox_id', $inbox_id);
+        $this->db->update('inbox');
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback();
+			return FALSE;
+		} else {
+			return TRUE;
+		}
     }
 }

@@ -283,8 +283,9 @@ class User extends CI_Controller {
     public function send_inbox($project) {
         $inbox_title = '';
         $inbox_description = '';
-        $project_id = $project[0]['id'];
+        $project_id = $project[0]['project_id'];
         $user_id = '';
+        $from_id = '';
 
         $employer = $this->model_user->get_user_profile($project[0]['employer_id']);
         $agent = $this->model_user->get_user_profile($project[0]['agent_id']);
@@ -295,60 +296,71 @@ class User extends CI_Controller {
                 ' is not satisfied with the result. Here is their complain description: <br> ' .
                 $project[0]['project_complain'];
             $user_id = $project[0]['agent_id'];
+            $from_id = $project[0]['employer_id'];
         } elseif($project[0]['status'] == -3) {
             $inbox_title = $project[0]['project_name'] . ' [Not Finished]';
             $inbox_description = $agent['name'] .' Cannot meet the project deadline';
             $user_id = $project[0]['employer_id'];
+            $from_id = $project[0]['agent_id'];
         } elseif($project[0]['status'] == -2) {
             $inbox_title = $project[0]['project_name'] . ' [Not Paid]';
             $inbox_description = $employer['name'] .' Does not pay for the project. The project has been cancelled.';
             $user_id = $project[0]['agent_id'];
+            $from_id = $project[0]['employer_id'];
         } elseif($project[0]['status'] == -1) {
             $inbox_title = $project[0]['project_name'] . ' [Refused]';
             $inbox_description = $agent['name'] .' Refuse your project proposal.';
             $user_id = $project[0]['employer_id'];
+            $from_id = $project[0]['agent_id'];
         } elseif($project[0]['status'] == 0) {
             $inbox_title = $project[0]['project_name'] . ' [New Proposal]';
             $inbox_description = $employer['name'] .' Propose a new project to you.';
             $user_id = $project[0]['agent_id'];
+            $from_id = $project[0]['employer_id'];
         } elseif($project[0]['status'] == 1) {
             $inbox_title = $project[0]['project_name'] . ' [Accepted]';
             $inbox_description = $agent['name'] .' Accept your project proposal.';
             $user_id = $project[0]['employer_id'];
+            $from_id = $project[0]['agent_id'];
         } elseif($project[0]['status'] == 2) {
             $inbox_title = $project[0]['project_name'] . ' [Paid]';
             $inbox_description = $employer['name'] .' Has complete the payment for this project. You may begin this project.';
             $user_id = $project[0]['agent_id'];
+            $from_id = $project[0]['employer_id'];
         } elseif($project[0]['status'] == 3) {
             $inbox_title = $project[0]['project_name'] . ' [Finished]';
             $inbox_description = $agent['name'] .' Finished this project. Please check it, and give a complain within 2 days.';
             $user_id = $project[0]['employer_id'];
+            $from_id = $project[0]['agent_id'];
         } elseif($project[0]['status'] == 4) {
             $inbox_title = $project[0]['project_name'] . ' [Satisfied]';
             $inbox_description = $employer['name'] .' Accept your work. Well Done!';
             $user_id = $project[0]['agent_id'];
+            $from_id = $project[0]['employer_id'];
         }
 
-        return $this->model_user->set_inbox($inbox_title, $inbox_description, $project_id, $user_id);
+        return $this->model_user->set_inbox($inbox_title, $inbox_description, $project_id, $user_id, $from_id);
     }
 
     public function inbox_detail(){
         $inbox_id = $this->input->get('inbox_id');
         $project_id = $this->input->get('project_id');
 
-        $data['title'] = "Inbox";
+        $data['title'] = "Inbox Detail";
         $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
         $data['inbox_detail'] = $this->model_user->get_inbox_detail($data['user']['id'], $inbox_id, $project_id);
 
-        var_dump($data['inbox_detail']);
-        exit();
+        $data['from'] = $this->model_user->get_user_profile($data['inbox_detail'][0]['from_id']);
+        $data['to'] = $this->model_user->get_user_profile($data['inbox_detail'][0]['user_id']);
+
+        $this->model_user->update_inbox_status(1, $inbox_id);
 
         //Load the header
         $this->load->view('templates/user_header', $data);
         $this->load->view('templates/user_topbar', $data);
         $this->load->view('templates/user_navbar', $data);
 
-        //$this->load->view('user/inbox', $data);
+        $this->load->view('user/inboxdetail', $data);
 
         //Load the footer
         $this->load->view('templates/user_footer', $data);
