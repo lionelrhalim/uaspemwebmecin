@@ -17,6 +17,8 @@
     <!-- Custom styles for this template-->
     <link href="<?= base_url('assets/'); ?>css/mecin.css" rel="stylesheet">
 
+    <link rel="icon" href="<?= base_url('assets/img/logo/')?>fav.png" sizes="any" type="image/png">
+    
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -24,11 +26,13 @@
     <header>
 
         <?php ## NAVBAR ## ?>
-        <nav class="navbar navbar-expand-md fixed-top navbar-dark">
-            <div class="container">
-                <a class="navbar-brand" href="#">
-                    <img src="<?= base_url('assets/img/logo/'); ?>logo_wide_white.png" alt="Logo" class="img-fluid"
-                        style="max-width: 150px; height: auto;">
+        <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-gradient-primary">
+            <div class="container px-1">
+                <a class="navbar-brand d-none d-md-block" href="<?= base_url(); ?>">
+                    <img src="<?= base_url('assets/img/logo/'); ?>logo-wide-white.svg" class="d-inline-block align-middle" alt=""  style="width: 100%;">
+                </a>
+                <a class="navbar-brand d-md-none" href="<?= base_url(); ?>" style="width: 20%;">
+                    <img src="<?= base_url('assets/img/logo/'); ?>logo-white.svg" class="d-inline-block align-middle" alt="" >
                 </a>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
@@ -42,7 +46,7 @@
                             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Menu</a>
+                            <a class="nav-link" href="#">asfa</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Menu 2</a>

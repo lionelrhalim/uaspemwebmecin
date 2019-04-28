@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "assets"
+		},
+		{
+			"path": "application\\controllers"
+		},
+		{
+			"path": "application\\models"
+		},
+		{
+			"path": "application\\views"
+		}
+	],
+	"settings": {}
+}

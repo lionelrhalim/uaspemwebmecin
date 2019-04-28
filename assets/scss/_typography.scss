@@ -18,7 +18,7 @@ p {
 }
 
 .font-light {
-	color: $font_light;
+	color: $font-light;
 }
 
 .font-primary {
@@ -27,6 +27,10 @@ p {
 
 .font-secondary {
 	color: $font_secondary;
+}
+
+.font-heading-primary {
+	color: $font-heading-primary;
 }
 
 .font-weight-900 {
