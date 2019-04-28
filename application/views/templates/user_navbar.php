@@ -13,6 +13,12 @@
         $navBar = $this->db->query($queryMenu)->result_array();
     ?>
 
+    <?php ## GET QUERY COUNT INBOX
+
+        $inbox = $this->model_user->get_unread_inbox($user['id']);
+        $count_inbox = count($inbox);
+    ?>
+
     <?php ## NAVBAR ## ?>
     <nav class="navbar navbar-expand-md static-top navbar-light bg-white shadow d-none d-md-block"
         style="margin-top:80px;">
@@ -31,12 +37,18 @@
 
                         <?php if($nb['title'] == 'Profile') : ?>
                         <a class="nav-link" href="<?= base_url('user/'.$nb['url'].'?id='.$user['id']); ?>">
-                            
+
+                        <?php elseif($nb['title'] == 'Inbox'): ?>
+                        <a class="nav-link" href="<?= base_url('user/'.$nb['url']); ?>">
+                            <span class="badge badge-primary">
+                                <?= $count_inbox; ?>
+                            </span>
+
                         <?php else : ?>
                         <a class="nav-link" href="<?= base_url('user/'.$nb['url']); ?>">
                         <?php endif; ?>
-                        
-                            <?= $nb['title']; ?>                    
+
+                            <?= $nb['title']; ?>
                         </a>
                     </li>
                     <?php endforeach; ?>
