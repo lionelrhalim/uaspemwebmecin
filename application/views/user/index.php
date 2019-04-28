@@ -21,33 +21,45 @@
             <div class="card shadow-sm mb-3 col-lg-8 mx-auto">
                 <div class="row no-gutters">
 
+                    <?php foreach ($project as $key=>$row): ?>
+                    <?php if($row['agent_id'] == $user['id'] && $row['status'] == 1): ?>
+                    <?php $countProject++; ?>
                     <div class="col-md-12">
                         <div class="card-body">
-                            <h3 class="card-title">Active Projects</h3>
-                            <hr>
-
-                            <h6 class="card-text font-primary">Category</h6>
-                            <h5 class="card-text">Project name</h5>
+                            <h6 class="card-text badge badge-pill badge-primary p-2"><?= $row['job_category']; ?></h6>
+                            <h5 class="card-text"><?= $row['project_name']; ?></h5>
                             <br>
 
-                            <p class="card-text font-primary mb-1">Worked by</p>
+                            <p class="card-text font-primary mb-1">Proposed To</p>
                             <div class="row mb-2">
                                 <div class="col-12 col-md-2 mb-2 mb-md-0">
-                                    <img src="<?= base_url('assets/img/profile/') . $user['image']; ?>"
+                                    <img src="<?= base_url('assets/img/profile/') . $employer[$key]['image']; ?>"
                                         class="card-img">
                                 </div>
                                 <div class="col text-center text-md-left">
-                                    <h5 class="card-text">Mecin.an Agent</h5>
-                                    <h6 class="text-card"><i class="fas fa-clock font-primary"></i> &nbsp; 19 August
-                                        2019
+                                    <h5 class="card-text"><?= $employer[$key]['name'] ?></h5>
+                                    <h6 class="text-card">
+                                        <i class="fas fa-clock font-primary"></i> &nbsp;
+                                        <?php $dateFormat = strtotime($row['deadline']); ?>
+                                        <?= date('d F Y', $dateFormat) ?>
                                     </h6>
                                     <a href="" class="btn btn-primary" role="button"
                                         style="width:7rem; margin-top:1rem;">Contact</a>
                                 </div>
                             </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <?php endif ?>
+                    <?php endforeach ?>
 
+                    <?php if($countProject <= 0): ?>
+                    <div class="col-md-12">
+                        <div class="card-body">
+                            <h6 class="card-text text-center vertical-align-center">No Active Project</h6>
                         </div>
                     </div>
+                    <?php endif ?>
 
                 </div>
             </div>
@@ -103,7 +115,7 @@
                                 alt="...">
                         </div>
                         <div class="carousel-item">
-                            <img src="https://via.placeholder.com/1920x300?text=Promo 2" class="d-block w-100"
+                            <img src="https://via.placeholder.com/1920x300?text=Dijual Calvin" class="d-block w-100"
                                 alt="...">
                         </div>
                         <div class="carousel-item">
@@ -142,7 +154,7 @@
                 <?php
 
                 $query = "SELECT id, name, image FROM user";
-        
+
                 $result = $this->db->query($query)->result_array();
 
                 //var_dump($result);
@@ -165,7 +177,7 @@
                                             aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
-        
+
                                 <div>
                                     Android
                                     <div class="progress mb-2">
@@ -173,7 +185,7 @@
                                             aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
-        
+
                                 <div>
                                     iOS
                                     <div class="progress mb-2">
@@ -181,7 +193,7 @@
                                             aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
-        
+
                             </p>
                             <div class="text-center mt-4"><a href="'. base_url('user/profile?id='.$row['id']) .'" class="btn btn-primary-custom px-4">Contact</a></div>
                         </div>

@@ -5,23 +5,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class User_model extends CI_Model{
 
     public function get_user_profile($sid) {
-
         // Selecting Columns
-        $columns_user =    "user.name, 
-                            user.email, 
-                            user.image, 
+        $columns_user =    "user.name,
+                            user.email,
+                            user.image,
                             user.date_created, ";
 
-        $columns_profile = "user_profile.user_id, 
-                            user_profile.phone, 
-                            user_profile.line, 
-                            user_profile.instagram, 
-                            user_profile.bank_id, 
-                            user_profile.bank_account, 
-                            user_profile.wallet, 
+        $columns_profile = "user_profile.user_id,
+                            user_profile.phone,
+                            user_profile.line,
+                            user_profile.instagram,
+                            user_profile.bank_id,
+                            user_profile.bank_account,
+                            user_profile.wallet,
                             user_profile.is_dev, ";
 
-        $columns_bank =    "bank.bank_name, 
+        $columns_bank =    "bank.bank_name,
                             bank.bank_abv";
 
         $columns = $columns_user.$columns_profile.$columns_bank;
@@ -39,11 +38,10 @@ class User_model extends CI_Model{
 
 
     public function get_agent_profile($get_id) {
-
         // Selecting Columns
-        $columns_user =    "user.name, 
-                            user.email, 
-                            user.image, 
+        $columns_user =    "user.name,
+                            user.email,
+                            user.image,
                             user.date_created, ";
 
         $columns_developer =   "developer_profile.* ";
@@ -67,7 +65,7 @@ class User_model extends CI_Model{
                     WHERE user_id = $get_id
                     ";
         $res_2 = $this->db->query($query)->result_array();
-        
+
         // Database Query for Agent Job
         $query =    "SELECT developer_access_job.*, job_category.job_category
                     FROM developer_access_job
@@ -87,11 +85,91 @@ class User_model extends CI_Model{
                     ";
         $res_4 = $this->db->query($query)->result_array();
 
-        
 
-        
+
+
         $result = array('profile' => $res, 'field' => $res_2, 'job' => $res_3, 'skill' => $res_4);
 
         return $result;
+    }
+
+
+    public function get_project() {
+        $this->db->select("*");
+        $this->db->from('project');
+        $this->db->join('field_category', 'field_category.id = project.field_category');
+        $this->db->join('job_category', 'job_category.id = project.job_category');
+        $result = $this->db->get();
+
+        return $result->result_array();
+    }
+
+    public function get_specific_project($project_id) {
+        $this->db->select("*");
+        $this->db->from('project');
+        $this->db->join('field_category', 'field_category.id = project.field_category');
+        $this->db->join('job_category', 'job_category.id = project.job_category');
+        $this->db->where('project_id', $project_id);
+        $result = $this->db->get();
+
+        return $result->result_array();
+    }
+
+    public function update_project_status($status, $projectID) {
+        $this->db->trans_begin();
+        $this->db->set('status', $status);
+        $this->db->where('project_id', $projectID);
+        $this->db->update('project');
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback();
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+    }
+
+
+    public function get_inbox($user_id) {
+        $this->db->select("*");
+        $this->db->from('inbox');
+        $this->db->where('inbox.user_id', $user_id);
+        $result = $this->db->get();
+
+        return $result->result_array();
+    }
+
+    public function set_inbox($inbox_title, $inbox_description, $project_id, $user_id) {
+        $this->db->trans_begin();
+        $this->db->set('inbox_title', $inbox_title);
+        $this->db->set('inbox_description', $inbox_description);
+        $this->db->set('project_id', $project_id);
+        $this->db->set('user_id', $user_id);
+        $this->db->insert('inbox');
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback();
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+    }
+
+    public function get_inbox_detail($user_id, $inbox_id, $project_id) {
+        $this->db->select('*');
+        $this->db->from('inbox');
+        $this->db->join('project', 'project.project_id = inbox.project_id', 'project.field_category = inbox.user_id');
+        $this->db->join('field_category', 'field_category.id = project.field_category');
+        $this->db->join('job_category', 'job_category.id = project.job_category');
+        $this->db->where('inbox.inbox_id', $inbox_id);
+        $this->db->where('inbox.user_id', $user_id);
+        $this->db->where('project.project_id', $project_id);
+        $result = $this->db->get();
+
+        return $result->result_array();
     }
 }

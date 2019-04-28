@@ -7,7 +7,7 @@
  * Description
  *      This controller is for handling user view when
  *      'role_id' = 'member'
- *  
+ *
 */
 
 defined('BASEPATH') or exit('No direct script access allowed');
@@ -29,6 +29,15 @@ class User extends CI_Controller {
         $data['field'] = $this->db->get('field_category')->result_array();
         $data['job'] = $this->db->get('job_category')->result_array();
         //$data['createproject'] = $this->db->get('project')->result_array();
+
+        $data['project'] = $this->model_user->get_project();
+        $data['employer'] = [];
+        $data['countProject'] = 0;
+
+        //Get Employer Profile
+        foreach ($data['project'] as $project) {
+            array_push($data['employer'], $this->model_user->get_user_profile($project['employer_id']));
+        }
 
         $this->form_validation->set_rules('projectname', 'Project Nmae', 'required');
         $this->form_validation->set_rules('desc', 'Description', 'required');
@@ -115,11 +124,11 @@ class User extends CI_Controller {
 
         // User viewing their own profile
         if ($get_id === $sid) {
-            
+
             // Heading data
             $data['title'] = "Profile";
             $data['card_title'] = "Profile Info";
-            
+
             // Load the heading
             $this->load->view('templates/user_header', $data);
             $this->load->view('templates/user_topbar', $data);
@@ -130,15 +139,15 @@ class User extends CI_Controller {
 
             // Load the view
             $this->load->view('user/profile', $data);
-            
+
             // Load the footer
             $this->load->view('templates/user_footer', $data);
 
-        } 
-        
+        }
+
         // User viewing agent details
         else {
-            
+
             // Heading data
             $data['title'] = "Browse";
             $data['card_title'] = "Agent Details";
@@ -171,6 +180,183 @@ class User extends CI_Controller {
 
 
     /*
+     * Name = project() method
+     * Description
+     *      To load information for project view
+     *      $data['employer'] for storing employer profile
+     *      $data['developer'] for storing developer profile
+    */
+    public function project(){
+        $data['title'] = "Project";
+        $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
+        $data['project'] = $this->model_user->get_project();
+
+        $data['employer'] = [];
+        $data['developer'] = [];
+        $data['countProposedEmployer'] = 0;
+        $data['countNeedPaidEmployer'] = 0;
+        $data['countRequestedAgent'] = 0;
+        $data['countOngoingAgent'] = 0;
+        $data['countComplainedAgent'] = 0;
+
+        //Get Employer Profile
+        foreach ($data['project'] as $project) {
+            array_push($data['employer'], $this->model_user->get_user_profile($project['employer_id']));
+        }
+
+        //Get Agent Profile
+        foreach ($data['project'] as $project) {
+            array_push($data['developer'], $this->model_user->get_user_profile($project['agent_id']));
+        }
+
+        //Load the header
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('templates/user_navbar', $data);
+
+        $this->load->view('user/project', $data);
+
+        //Load the footer
+        $this->load->view('templates/user_footer', $data);
+    }
+
+    /*
+     * Name = updateProjectStatus() method
+     * Description
+     *      To Update Project Status
+     *      status = -4 [Not Satisfied / Complain]
+     *      status = -3 [Not Finished]
+     *      status = -2 [Not Paid]
+     *      status = -1 [refused]
+     *      status =  0 [waiting]
+     *      status =  1 [accepted]
+     *      status =  2 [Paid]
+     *      status =  3 [Finished]
+     *      status =  4 [Satisfied]
+    */
+    public function updateProjectStatus($status, $project_id){
+        var_dump($project_id);
+
+        $result = $this->model_user->update_project_status($status, $project_id);
+
+        if($result == true){
+            $project = $this->model_user->get_specific_project($project_id);
+            $send_result = $this->send_inbox($project);
+
+            if($send_result) {
+                redirect('user/project');
+            } else {
+                var_dump('Gagal Send Inbox');
+            }
+        } else {
+            var_dump('Gagal update project status');
+        }
+    }
+
+
+
+    /*
+     * Name = inbox() method
+     * Description
+     *      To load information for inbox view
+     *      $data['employer'] for storing employer profile
+     *      $data['developer'] for storing developer profile
+    */
+    public function inbox(){
+        $data['title'] = "Inbox";
+        $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
+        $data['inbox'] = $this->model_user->get_inbox( $data['user']['id'] );
+
+        $data['countInbox'] = 0;
+
+        //Load the header
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('templates/user_navbar', $data);
+
+        $this->load->view('user/inbox', $data);
+
+        //Load the footer
+        $this->load->view('templates/user_footer', $data);
+    }
+
+    public function send_inbox($project) {
+        $inbox_title = '';
+        $inbox_description = '';
+        $project_id = $project[0]['id'];
+        $user_id = '';
+
+        $employer = $this->model_user->get_user_profile($project[0]['employer_id']);
+        $agent = $this->model_user->get_user_profile($project[0]['agent_id']);
+
+        if($project[0]['status'] == -4) {
+            $inbox_title = $project[0]['project_name'] . ' [Not Satisfied / Complain]';
+            $inbox_description = $employer['name'] .
+                ' is not satisfied with the result. Here is their complain description: <br> ' .
+                $project[0]['project_complain'];
+            $user_id = $project[0]['agent_id'];
+        } elseif($project[0]['status'] == -3) {
+            $inbox_title = $project[0]['project_name'] . ' [Not Finished]';
+            $inbox_description = $agent['name'] .' Cannot meet the project deadline';
+            $user_id = $project[0]['employer_id'];
+        } elseif($project[0]['status'] == -2) {
+            $inbox_title = $project[0]['project_name'] . ' [Not Paid]';
+            $inbox_description = $employer['name'] .' Does not pay for the project. The project has been cancelled.';
+            $user_id = $project[0]['agent_id'];
+        } elseif($project[0]['status'] == -1) {
+            $inbox_title = $project[0]['project_name'] . ' [Refused]';
+            $inbox_description = $agent['name'] .' Refuse your project proposal.';
+            $user_id = $project[0]['employer_id'];
+        } elseif($project[0]['status'] == 0) {
+            $inbox_title = $project[0]['project_name'] . ' [New Proposal]';
+            $inbox_description = $employer['name'] .' Propose a new project to you.';
+            $user_id = $project[0]['agent_id'];
+        } elseif($project[0]['status'] == 1) {
+            $inbox_title = $project[0]['project_name'] . ' [Accepted]';
+            $inbox_description = $agent['name'] .' Accept your project proposal.';
+            $user_id = $project[0]['employer_id'];
+        } elseif($project[0]['status'] == 2) {
+            $inbox_title = $project[0]['project_name'] . ' [Paid]';
+            $inbox_description = $employer['name'] .' Has complete the payment for this project. You may begin this project.';
+            $user_id = $project[0]['agent_id'];
+        } elseif($project[0]['status'] == 3) {
+            $inbox_title = $project[0]['project_name'] . ' [Finished]';
+            $inbox_description = $agent['name'] .' Finished this project. Please check it, and give a complain within 2 days.';
+            $user_id = $project[0]['employer_id'];
+        } elseif($project[0]['status'] == 4) {
+            $inbox_title = $project[0]['project_name'] . ' [Satisfied]';
+            $inbox_description = $employer['name'] .' Accept your work. Well Done!';
+            $user_id = $project[0]['agent_id'];
+        }
+
+        return $this->model_user->set_inbox($inbox_title, $inbox_description, $project_id, $user_id);
+    }
+
+    public function inbox_detail(){
+        $inbox_id = $this->input->get('inbox_id');
+        $project_id = $this->input->get('project_id');
+
+        $data['title'] = "Inbox";
+        $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
+        $data['inbox_detail'] = $this->model_user->get_inbox_detail($data['user']['id'], $inbox_id, $project_id);
+
+        var_dump($data['inbox_detail']);
+        exit();
+
+        //Load the header
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('templates/user_navbar', $data);
+
+        //$this->load->view('user/inbox', $data);
+
+        //Load the footer
+        $this->load->view('templates/user_footer', $data);
+    }
+
+
+
+    /*
      * Name = edit() method
      * Description
      *      To load information for profile view
@@ -178,10 +364,10 @@ class User extends CI_Controller {
     public function edit(){
         $data['title'] = 'Edit Profile';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-        
+
         $this->form_validation->set_rules('name', 'Full Name', 'required|trim');
         $this->form_validation->set_rules('description', 'Description', 'trim');
-        
+
         if ($this->form_validation->run() == false) {
             $this->load->view('templates/user_header', $data);
             //$this->load->view('templates/user_sidebar', $data);
@@ -224,7 +410,7 @@ class User extends CI_Controller {
             $this->db->set('description', $description);
             $this->db->where('email', $email);
             $this->db->update('user');
-            $this->session->set_flashdata('message', 
+            $this->session->set_flashdata('message',
                 '<div class="alert alert-success" role="alert">
                     <small>Your profile has been updated!</small>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -244,7 +430,7 @@ class User extends CI_Controller {
         $this->form_validation->set_rules('current_password', 'Current Password', 'required|trim');
         $this->form_validation->set_rules('new_password1', 'New Password', 'required|trim|min_length[8]|matches[new_password2]');
         $this->form_validation->set_rules('new_password2', 'Confirm New Password', 'required|trim|min_length[8]|matches[new_password1]');
-        
+
         if ($this->form_validation->run() == false) {
             $this->load->view('templates/user_header', $data);
             $this->load->view('templates/user_sidebar', $data);
@@ -258,7 +444,7 @@ class User extends CI_Controller {
             //cek password current yang diinput sama seperti yang di database atau tidak
             //apabila tidak sama
             if (!password_verify($current_password, $data['user']['password'])) {
-                $this->session->set_flashdata('message', 
+                $this->session->set_flashdata('message',
                     '<div class="alert alert-danger" role="alert">
                         <small>Wrong current password!</small>
                     </div>
@@ -280,8 +466,8 @@ class User extends CI_Controller {
                     $this->db->set('password', $password_hash);
                     $this->db->where('email', $this->session->userdata('email'));
                     $this->db->update('user');
-                    
-                    $this->session->set_flashdata('message', 
+
+                    $this->session->set_flashdata('message',
                         '<div class="alert alert-success" role="alert">
                             <small>Password changed!</small>
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -311,7 +497,7 @@ class User extends CI_Controller {
         $data['title'] = 'Past Project';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
         $data['createproject'] = $this->db->get('createproject')->result_array();
-        
+
         $this->load->view('templates/user_header', $data);
         $this->load->view('templates/user_sidebar', $data);
         $this->load->view('templates/user_topbar', $data);
