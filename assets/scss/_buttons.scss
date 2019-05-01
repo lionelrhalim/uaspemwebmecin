@@ -93,3 +93,14 @@
     background-image: linear-gradient(to right, $gradient_button);
   }
 }
+
+.btn-link-accordion {
+  &:hover {
+    color: $font-primary;
+  }
+
+  &:focus {
+    text-decoration: none;
+  }
+
+}

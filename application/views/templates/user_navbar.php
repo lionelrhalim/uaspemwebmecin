@@ -36,16 +36,16 @@
                     <?php endif; ?>
 
                         <?php if($nb['title'] == 'Profile') : ?>
-                        <a class="nav-link" href="<?= base_url('user/'.$nb['url'].'?id='.$user['id']); ?>">
+                        <a class="nav-link" href="<?= base_url($nb['url'].'?id='.$user['id']); ?>">
 
                         <?php elseif($nb['title'] == 'Inbox'): ?>
-                        <a class="nav-link" href="<?= base_url('user/'.$nb['url']); ?>">
+                        <a class="nav-link" href="<?= base_url($nb['url']); ?>">
                             <span class="badge badge-primary">
                                 <?= $count_inbox; ?>
                             </span>
 
                         <?php else : ?>
-                        <a class="nav-link" href="<?= base_url('user/'.$nb['url']); ?>">
+                        <a class="nav-link" href="<?= base_url($nb['url']); ?>">
                         <?php endif; ?>
 
                             <?= $nb['title']; ?>

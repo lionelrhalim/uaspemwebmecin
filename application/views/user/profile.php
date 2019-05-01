@@ -76,90 +76,17 @@
                                 </small>
                             </p>
 
+                            <?php if ($user['is_dev'] === 1) : ?>
+                            <a href="<?= base_url('project/propose?id='.$user['user_id']); ?>" class="btn btn-primary" role="button"
+                                style="width:7rem; margin-top:1rem;">Contact</a>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                 </div>
             </div>
 
-            <?php if ($user['is_dev'] === 1) : ?>
-            <?php ## Propose Form ## ?>
-            <div class="col-6 mx-auto">
-
-                <?php ## Propose a New Project ?>
-                <div class="card shadow-sm mb-3 col-12 ml-2">
-                    <div class="row no-gutters">
-
-                        <div class="col-md-12">
-                            <div class="card-body">
-                                <h3 class="card-title">Propose a New Projects</h3>
-                                <hr>
-
-                                <form action="<?= base_url('user/index?id=').$user['user_id']; ?>" method="post">
-                                    <div class="form-group">
-                                        <label for="projectname"><strong>Enter your project name</strong></label>
-                                        <input type="text" class="form-control" id="projectname" name="projectname"
-                                            placeholder="e.g Build me a news blog">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="desc"><strong>Tell us more</strong></label>
-                                        <textarea class="form-control" id="desc" name="desc"
-                                            style="resize:none;" rows="5" placeholder="Describe your project..."></textarea>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="desc"><strong>Select best match category</strong></label>
-                                        <select class="form-control" id="field_category" name="field_category">
-                                            <option value="">Select Field Category</option>
-                                            <?php foreach($field as $f) : ?>
-                                            <option value="<?= $f['field_category_id']; ?>"><?= $f['field_category']; ?>
-                                            </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <select class="form-control" id="job_category" name="job_category">
-                                            <option value="">Select Job Category</option>
-                                            <?php foreach($job as $j) : ?>
-                                            <option value="<?= $j['job_category_id']; ?>"><?= $j['job_category']; ?>
-                                            </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="desc"><strong>When should it finished?</strong></label>
-                                        <input type="date" class="form-control" id="times" name="times"
-                                            placeholder="Enter the deadline">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="desc"><strong>Bid your starting price</strong></label>
-                                        <div class="input-group mb-2">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">Rp</div>
-                                            </div>
-                                            <input type="number" class="form-control" id="price" name="price"
-                                                placeholder="e.g 200000">
-                                        </div>
-                                    </div>
-
-                                    <div class="float-right mb-4">
-                                        <button type="submit" class="btn btn-primary text-uppercase">
-                                            <strong>Propose Now</strong>
-                                        </button>
-                                        <button type="reset" class="btn btn-danger">Reset</button>
-                                    </div>
-                                </form>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <?php endif; ?>
+            
 
 
         </div>

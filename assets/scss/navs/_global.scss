@@ -51,3 +51,14 @@
     color: $font-primary !important;
   }
 }
+
+.nav-tabs {
+
+  .nav-item {
+    padding-right: 5px;
+  }
+
+  .nav-link {
+    color: $font-light;
+  }
+}

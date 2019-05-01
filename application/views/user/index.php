@@ -22,36 +22,67 @@
                 <div class="row no-gutters">
 
                     <?php foreach ($project as $key=>$row): ?>
-                    <?php if($row['agent_id'] == $user['id'] && $row['status'] == 1): ?>
-                    <?php $countProject++; ?>
-                    <div class="col-md-12">
-                        <div class="card-body">
-                            <h6 class="card-text badge badge-pill badge-primary p-2"><?= $row['job_category']; ?></h6>
-                            <h5 class="card-text"><?= $row['project_name']; ?></h5>
-                            <br>
+                        <?php ## Overview if USER == agent ## ?>
+                        <?php if($row['agent_id'] == $user['id'] && $row['status'] == 1): ?>
+                            <?php $countProject++; ?>
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h6 class="card-text badge badge-pill badge-primary p-2"><?= $row['job_category']; ?></h6>
+                                    <h5 class="card-text"><?= $row['project_name']; ?></h5>
+                                    <br>
 
-                            <p class="card-text font-primary mb-1">Proposed To</p>
-                            <div class="row mb-2">
-                                <div class="col-12 col-md-2 mb-2 mb-md-0">
-                                    <img src="<?= base_url('assets/img/profile/') . $employer[$key]['image']; ?>"
-                                        class="card-img">
+                                    <p class="card-text font-primary mb-1">Project from</p>
+                                    <div class="row mb-2">
+                                        <div class="col-12 col-md-2 mb-2 mb-md-0">
+                                            <img src="<?= base_url('assets/img/profile/') . $employer[$key]['image']; ?>"
+                                                class="card-img">
+                                        </div>
+                                        <div class="col text-center text-md-left">
+                                            <h5 class="card-text"><?= $employer[$key]['name'] ?></h5>
+                                            <h6 class="text-card">
+                                                <i class="fas fa-clock font-primary"></i> &nbsp;
+                                                <?php $dateFormat = strtotime($row['deadline']); ?>
+                                                <?= date('d F Y', $dateFormat) ?>
+                                            </h6>
+                                            <a href="" class="btn btn-primary" role="button"
+                                                style="width:7rem; margin-top:1rem;">Contact</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col text-center text-md-left">
-                                    <h5 class="card-text"><?= $employer[$key]['name'] ?></h5>
-                                    <h6 class="text-card">
-                                        <i class="fas fa-clock font-primary"></i> &nbsp;
-                                        <?php $dateFormat = strtotime($row['deadline']); ?>
-                                        <?= date('d F Y', $dateFormat) ?>
-                                    </h6>
-                                    <a href="" class="btn btn-primary" role="button"
-                                        style="width:7rem; margin-top:1rem;">Contact</a>
-                                </div>
+                                <hr>
                             </div>
-                        </div>
-                        <hr>
-                    </div>
-                    <?php endif ?>
+                        <?php ## Overview if USER == EMPLOYER ## ?>
+                        <?php elseif($row['employer_id'] == $user['id'] && $row['status'] == 1): ?>
+                            <?php $countProject++; ?>
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h6 class="card-text badge badge-pill badge-primary p-2"><?= $row['job_category']; ?></h6>
+                                    <h5 class="card-text"><?= $row['project_name']; ?></h5>
+                                    <br>
+
+                                    <p class="card-text font-primary mb-1">Worked by</p>
+                                    <div class="row mb-2">
+                                        <div class="col-12 col-md-2 mb-2 mb-md-0">
+                                            <img src="<?= base_url('assets/img/profile/') . $agent[$key]['image']; ?>"
+                                                class="card-img">
+                                        </div>
+                                        <div class="col text-center text-md-left">
+                                            <h5 class="card-text"><?= $agent[$key]['name'] ?></h5>
+                                            <h6 class="text-card">
+                                                <i class="fas fa-clock font-primary"></i> &nbsp;
+                                                <?php $dateFormat = strtotime($row['deadline']); ?>
+                                                <?= date('d F Y', $dateFormat) ?>
+                                            </h6>
+                                            <a href="" class="btn btn-primary" role="button"
+                                                style="width:7rem; margin-top:1rem;">Contact</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                        <?php endif ?>
                     <?php endforeach ?>
+
 
                     <?php if($countProject <= 0): ?>
                     <div class="col-md-12">
@@ -150,56 +181,51 @@
                 <h2 class="mb-4 text-gray-600">Top Agents</h2>
             </div>
 
-            <div class="card-deck mx-auto">
-                <?php
+            <div class="container">            
+                <div class="card-deck mx-auto">
+                    <?php
 
-                $query = "SELECT id, name, image FROM user";
+                    $query = "SELECT id, name, image FROM user LIMIT 6";
 
-                $result = $this->db->query($query)->result_array();
+                    $result = $this->db->query($query)->result_array();
 
-                //var_dump($result);
+                    $index= 0;
+                    $maxcard= 3;
 
-                foreach($result as $row){
-                    echo '
-                    <div class="card o-hidden shadow-sm  my-3 profile-card" style="width: 18rem;">
-                        <div class="card-header"></div>
-                        <div class="text-center">
-                            <img src="'. base_url('assets/img/profile/') . $row['image'] .'" class="card-img-top w-50"
-                                alt="profile_pict">
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                <h5 class="text-center font-weight-600 mb-4">'. $row['name'] .'</h5>
-                                <div>
-                                    Website
-                                    <div class="progress mb-2">
-                                        <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: 85%" aria-valuenow="25"
-                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
+                    foreach($result as $row){
+                        echo '
+                        <div class="card o-hidden shadow-sm my-3 profile-card" style="width: 18rem;">
+                            <div class="card-header"></div>
+                            <div class="text-center">
+                                <img src="'. base_url('assets/img/profile/') . $row['image'] .'" class="card-img-top w-50"
+                                    alt="profile_pict">
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <h5 class="text-center font-weight-600 mb-4">'. $row['name'] .'</h5>
+                                </p>
+                                <div class="text-center mt-4"><a href="'. base_url('user/profile?id='.$row['id']) .'" class="btn btn-primary-custom px-4">Contact</a></div>
+                            </div>
+                        </div>';
 
-                                <div>
-                                    Android
-                                    <div class="progress mb-2">
-                                        <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: 65%" aria-valuenow="25"
-                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
+                        if($index==($maxcard-1)):
+                            $index=0;
+                            echo    '<div class="w-100 d-none d-md-block mt-4"></div>
+                            ';
+                        else:
+                            $index++;
+                        endif;
+                    }
 
-                                <div>
-                                    iOS
-                                    <div class="progress mb-2">
-                                        <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: 45%" aria-valuenow="25"
-                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-
-                            </p>
-                            <div class="text-center mt-4"><a href="'. base_url('user/profile?id='.$row['id']) .'" class="btn btn-primary-custom px-4">Contact</a></div>
-                        </div>
-                    </div>';
-                }
-                ?>
+                    if($index!=0):
+                        while($index!=$maxcard):
+                            $index++;
+                            echo    '<div class="card" style="border: none; background: none;"></div>';
+                        endwhile;
+                    endif;
+                    
+                    ?>
+                </div>
             </div>
 
         </div>
@@ -305,7 +331,7 @@
                 </div>
 
                 <?php ## Benefit Card ?>
-                <div class="card o-hidden shadow-sm card-header-primary">
+                <div class="card o-hidden shadow-sm">
 
                     <div class="card-body">
                         <h5 class="card-title">What you can get from<br>our professional work</h5>
@@ -317,7 +343,7 @@
                         <p class="card-text"><i class="fas fa-check font-primary"></i> &nbsp; Another Benefit</p>
                     </div>
 
-                    <div class="card-footer">
+                    <div class="card-footer card-footer-primary">
                         <h4 class="font-light mt-3">Still have questions?</h4>
                         <a href="" role="button" class="btn btn-outline-light mb-3">See Feature</a>
                     </div>

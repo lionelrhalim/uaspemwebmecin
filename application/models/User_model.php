@@ -4,7 +4,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class User_model extends CI_Model{
 
+    public function get_user() {
+        return $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
+    }
+
     public function get_user_profile($sid) {
+
         // Selecting Columns
         $columns_user =    "user.name,
                             user.email,
@@ -38,6 +43,7 @@ class User_model extends CI_Model{
 
 
     public function get_agent_profile($get_id) {
+
         // Selecting Columns
         $columns_user =    "user.name,
                             user.email,
@@ -95,6 +101,7 @@ class User_model extends CI_Model{
 
 
     public function get_project() {
+
         $this->db->select("*");
         $this->db->from('project');
         $this->db->join('field_category', 'field_category.id = project.field_category');
@@ -105,6 +112,7 @@ class User_model extends CI_Model{
     }
 
     public function get_specific_project($project_id) {
+
         $this->db->select("*");
         $this->db->from('project');
         $this->db->join('field_category', 'field_category.id = project.field_category');
@@ -116,6 +124,7 @@ class User_model extends CI_Model{
     }
 
     public function update_project_status($status, $projectID) {
+
         $this->db->trans_begin();
         $this->db->set('status', $status);
         $this->db->where('project_id', $projectID);
@@ -133,6 +142,7 @@ class User_model extends CI_Model{
 
 
     public function get_inbox($user_id) {
+
         $this->db->select("*");
         $this->db->from('inbox');
         $this->db->where('inbox.user_id', $user_id);
@@ -143,6 +153,7 @@ class User_model extends CI_Model{
     }
 
     public function get_unread_inbox($user_id) {
+
         $this->db->select("*");
         $this->db->from('inbox');
         $this->db->where('inbox.user_id', $user_id);
@@ -154,6 +165,7 @@ class User_model extends CI_Model{
     }
 
     public function set_inbox($inbox_title, $inbox_description, $project_id, $user_id, $from_id) {
+
         $this->db->trans_begin();
         $this->db->set('inbox_title', $inbox_title);
         $this->db->set('inbox_description', $inbox_description);
@@ -173,6 +185,7 @@ class User_model extends CI_Model{
     }
 
     public function get_inbox_detail($user_id, $inbox_id, $project_id) {
+
         $this->db->select('*');
         $this->db->from('inbox');
         $this->db->join('project', 'project.project_id = inbox.project_id', 'project.field_category = inbox.user_id');
@@ -187,6 +200,7 @@ class User_model extends CI_Model{
     }
 
     public function update_inbox_status($status, $inbox_id) {
+        
         $this->db->trans_begin();
         $this->db->set('inbox_status', $status);
         $this->db->where('inbox_id', $inbox_id);

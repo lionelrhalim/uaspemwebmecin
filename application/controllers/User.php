@@ -14,7 +14,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class User extends CI_Controller {
 
-    // Constructor
+    /*
+     * Name = __construct() method
+     * Description
+     *      - Constructor
+     *      - To load User_model as model_user
+    */
     public function __construct() {
 
         parent::__construct();
@@ -22,81 +27,52 @@ class User extends CI_Controller {
         $this->load->model('User_model', 'model_user');
     }
 
-    public function index() {
-        $data['title'] = "Dashboard";
-        $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
 
+
+    /*
+     * Name = index() method
+     * Description
+     *      To load dashboard info
+    */
+    public function index() {
+
+        $data['title'] = "Dashboard";
+
+        $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
         $data['field'] = $this->db->get('field_category')->result_array();
         $data['job'] = $this->db->get('job_category')->result_array();
-        //$data['createproject'] = $this->db->get('project')->result_array();
 
+
+        // Load project, employer, and agent data
         $data['project'] = $this->model_user->get_project();
-        $data['employer'] = [];
         $data['countProject'] = 0;
-
-        //Get Employer Profile
+        $data['employer'] = [];
+        $data['agent'] = [];
         foreach ($data['project'] as $project) {
             array_push($data['employer'], $this->model_user->get_user_profile($project['employer_id']));
+            array_push($data['agent'], $this->model_user->get_user_profile($project['agent_id']));
         }
 
-        $this->form_validation->set_rules('projectname', 'Project Nmae', 'required');
-        $this->form_validation->set_rules('desc', 'Description', 'required');
-        $this->form_validation->set_rules('field_category', 'Field Category', 'required');
-        $this->form_validation->set_rules('job_category', 'Job Category', 'required');
-        $this->form_validation->set_rules('times', 'Times', 'required');
-        $this->form_validation->set_rules('price', 'Price', 'required');
-
-        if($this->form_validation->run() == false){
-            $this->load->view('templates/user_header', $data);
-            $this->load->view('templates/user_topbar', $data);
-            $this->load->view('templates/user_navbar', $data);
-            $this->load->view('user/index', $data);
-            $this->load->view('templates/user_footer', $data);
-        }else{
-            $status = 0;
-            $employer_id = $data['user']['id'];
-            $agent_id = $this->input->get('id');
-
-            $data = [
-                'project_name' => $this->input->post('projectname', TRUE),
-                'field_category' => $this->input->post('field_category', TRUE),
-                'job_category' => $this->input->post('job_category', TRUE),
-                'deadline' => $this->input->post('times', TRUE),
-                'bid' => $this->input->post('price', TRUE),
-                'description' => $this->input->post('desc', TRUE),
-                'status' => $status,
-                'employer_id' => $employer_id,
-                'agent_id' => $agent_id,
-            ];
-
-            $this->db->insert('project', $data);
-
-            // if($this->input->post('submitDone') != null){
-            //     echo"lalala";
-            //     $projectname = $this->input->post('projectname');
-            //     $this->db->set('status', 1);
-            //     $this->db->where('project_name', $projectname);
-            //     $this->db->update('createproject');
-            // }
-
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <small>Your Project Has Been Proposed</small>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>'
-            );
-            redirect('user');
-        }
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('templates/user_navbar', $data);
+        $this->load->view('user/index', $data);
+        $this->load->view('templates/user_footer', $data);
     }
 
+
+
+    /*
+     * Name = updateStatus() method
+     * Description
+     *      To update project status
+    */
     public function updateStatus(){
+
         $projectname = $this->input->post('projectname');
 
         if(isset($_POST['submitDone'])){
-            echo "abc";
+
             $this->db->set('status', 1);
             $this->db->where('status', 0);
             $this->db->where('project_name', $projectname);
@@ -142,7 +118,6 @@ class User extends CI_Controller {
 
             // Load the footer
             $this->load->view('templates/user_footer', $data);
-
         }
 
         // User viewing agent details
@@ -173,52 +148,9 @@ class User extends CI_Controller {
 
             // Load the footer
             $this->load->view('templates/user_footer', $data);
-
         }
     }
-
-
-
-    /*
-     * Name = project() method
-     * Description
-     *      To load information for project view
-     *      $data['employer'] for storing employer profile
-     *      $data['developer'] for storing developer profile
-    */
-    public function project(){
-        $data['title'] = "Project";
-        $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
-        $data['project'] = $this->model_user->get_project();
-
-        $data['employer'] = [];
-        $data['developer'] = [];
-        $data['countProposedEmployer'] = 0;
-        $data['countNeedPaidEmployer'] = 0;
-        $data['countRequestedAgent'] = 0;
-        $data['countOngoingAgent'] = 0;
-        $data['countComplainedAgent'] = 0;
-
-        //Get Employer Profile
-        foreach ($data['project'] as $project) {
-            array_push($data['employer'], $this->model_user->get_user_profile($project['employer_id']));
-        }
-
-        //Get Agent Profile
-        foreach ($data['project'] as $project) {
-            array_push($data['developer'], $this->model_user->get_user_profile($project['agent_id']));
-        }
-
-        //Load the header
-        $this->load->view('templates/user_header', $data);
-        $this->load->view('templates/user_topbar', $data);
-        $this->load->view('templates/user_navbar', $data);
-
-        $this->load->view('user/project', $data);
-
-        //Load the footer
-        $this->load->view('templates/user_footer', $data);
-    }
+    
 
     /*
      * Name = updateProjectStatus() method
