@@ -31,7 +31,8 @@
 									<div class="form-group">
 										<input name="email" type="text" class="form-control form-control-user"
 											id="email" placeholder="Email Address"
-											value="<?= set_value('email'); //Set value if exist ?>">
+											<?php ## Set value if exist ## ?>
+											value="<?= set_value('email'); ?>">
 										<?php //Shows error message if any ?>
 										<?= form_error('email', '<small class="text-danger font-weight-600 pl-3">* ', '</small>'); ?>
 									</div>

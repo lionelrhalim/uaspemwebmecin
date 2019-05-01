@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "application\\views"
+		},
+		{
+			"path": "application\\helpers"
 		}
 	],
 	"settings": {}

@@ -14,20 +14,21 @@
 
                         <div class="form-group">
                             <label for="agent"><strong>Propose to</strong></label>
-                            <input type="text" class="form-control" id="agent" placeholder="<?= $user['contact_name']['profile']['name']; ?>" disabled>
+                            <input type="text" class="form-control" id="agent"
+                                placeholder="<?= $user['contact_name']['profile']['name']; ?>" disabled>
                         </div>
 
                         <div class="form-group">
                             <label for="projectname"><strong>Enter your project name</strong></label>
                             <input type="text" class="form-control" id="projectname" name="projectname"
-                                placeholder="e.g Build me a news blog">
+                                placeholder="e.g Build me a news blog" value="<?= set_value('projectname'); ?>">
                             <?= form_error('projectname', '<small class="text-danger pl-3">* ', '</small>'); ?>
                         </div>
 
                         <div class="form-group">
                             <label for="desc"><strong>Tell us more</strong></label>
-                            <textarea class="form-control" id="desc" name="desc"
-                                style="resize:none;" rows="5" placeholder="Describe your project..."></textarea>
+                            <textarea class="form-control" id="desc" name="desc" style="resize:none;" rows="5"
+                                placeholder="Describe your project..."><?php echo set_value('desc'); ?></textarea>
                             <?= form_error('desc', '<small class="text-danger pl-3">* ', '</small>'); ?>
                         </div>
 
@@ -57,7 +58,7 @@
                         <div class="form-group">
                             <label for="times"><strong>When should it finished?</strong></label>
                             <input type="date" class="form-control" id="times" name="times"
-                                placeholder="Enter the deadline">
+                                placeholder="Enter the deadline" value="<?= set_value('times'); ?>">
                             <?= form_error('times', '<small class="text-danger pl-3">* ', '</small>'); ?>
                         </div>
 
@@ -68,7 +69,7 @@
                                     <div class="input-group-text">Rp</div>
                                 </div>
                                 <input type="number" class="form-control" id="price" name="price"
-                                    placeholder="e.g 200000">
+                                    placeholder="e.g 200000" value="<?= set_value('price'); ?>">
                             </div>
                             <?= form_error('price', '<small class="text-danger pl-3">* ', '</small>'); ?>
                         </div>

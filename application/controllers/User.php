@@ -25,6 +25,7 @@ class User extends CI_Controller {
         parent::__construct();
         is_logged_in();
         $this->load->model('User_model', 'model_user');
+        $this->load->model('Project_model', 'model_project');
     }
 
 
@@ -44,7 +45,7 @@ class User extends CI_Controller {
 
 
         // Load project, employer, and agent data
-        $data['project'] = $this->model_user->get_project();
+        $data['project'] = $this->model_project->get_project(0);
         $data['countProject'] = 0;
         $data['employer'] = [];
         $data['agent'] = [];
@@ -112,6 +113,7 @@ class User extends CI_Controller {
 
             // Additional data
             $data['user']['headline'] = null;
+            $data['user']['hide_wallet'] = 0;
 
             // Load the view
             $this->load->view('user/profile', $data);
@@ -142,6 +144,7 @@ class User extends CI_Controller {
             // Additional data
             $data['user']['email'] = null;
             $data['user']['is_dev'] = 1;
+            $data['user']['hide_wallet'] = 1;
 
             // Load the view
             $this->load->view('user/profile', $data);
@@ -176,7 +179,7 @@ class User extends CI_Controller {
             $send_result = $this->send_inbox($project);
 
             if($send_result) {
-                redirect('user/project');
+                redirect('project');
             } else {
                 var_dump('Gagal Send Inbox');
             }
@@ -303,18 +306,17 @@ class User extends CI_Controller {
     /*
      * Name = edit() method
      * Description
-     *      To load information for profile view
+     *      To edit user information
     */
     public function edit(){
+
         $data['title'] = 'Edit Profile';
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
         $this->form_validation->set_rules('name', 'Full Name', 'required|trim');
-        $this->form_validation->set_rules('description', 'Description', 'trim');
 
         if ($this->form_validation->run() == false) {
             $this->load->view('templates/user_header', $data);
-            //$this->load->view('templates/user_sidebar', $data);
             $this->load->view('templates/user_topbar', $data);
             $this->load->view('templates/user_navbar', $data);
             $this->load->view('user/edit', $data);
@@ -322,36 +324,48 @@ class User extends CI_Controller {
         } else {
             $name = $this->input->post('name');
             $email = $this->input->post('email');
-            $description = $this->input->post('description');
-
 
             // cek jika ada gambar yang akan diupload
             $upload_image = $_FILES['image']['name'];
 
             if ($upload_image) {
+
+                $this->load->library('upload');
+
                 //hanya bisa upload gambar sesuai dengan ketentuan dibawah ini
                 $config['allowed_types'] = 'gif|jpg|png';
                 $config['max_size'] = '2048'; //2MB
                 $config['upload_path'] = './assets/img/profile/';
 
-                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
 
                 if ($this->upload->do_upload('image')) {
+                    
+                    $config['image_library'] = 'gd2';
+                    $config['source_image'] = './assets/img/profile/'.$this->upload->data('file_name');
+                    $config['maintain_ratio'] = FALSE;
+                    $config['width']         = 150;
+                    $config['height']       = 150;
+                    $config['new_image']= './assets/img/profile/';
+                    $this->load->library('image_lib', $config);
+                    $this->image_lib->resize();
+
                     $old_image = $data['user']['image'];
                     if ($old_image != 'default.jpg') {
                         //untuk menghapus image lama yang sudah tidak terpakai selain default.jpg
                         unlink(FCPATH . 'assets/img/profile/' . $old_image);
                     }
+                    
                     $new_image = $this->upload->data('file_name');
                     //set untuk dimasukan ke db new_imagenya
                     $this->db->set('image', $new_image);
+                    
                 } else {
                     echo $this->upload->display_errors();
                 }
             }
 
             $this->db->set('name', $name);
-            $this->db->set('description', $description);
             $this->db->where('email', $email);
             $this->db->update('user');
             $this->session->set_flashdata('message',

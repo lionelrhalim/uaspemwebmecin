@@ -23,13 +23,6 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label for="name" class="col-sm-2 col-form-label">Description</label>
-                <div class="col-sm-10">
-                    <textarea class="form-control" id="description" name="description" value="<?= $user['description']; ?>"></textarea>
-                    <?= form_error('name', '<small class="text-danger pl-3">', '</small>'); ?>
-                </div>
-            </div>
-            <div class="form-group row">
                 <div class="col-sm-2">Picture</div>
                 <div class="col-sm-10">
                     <div class="row">
@@ -41,6 +34,7 @@
                                 <input type="file" class="custom-file-input" id="image" name="image">
                                 <label class="custom-file-label" for="image">Choose file</label>
                             </div>
+                            <small class="text-primary">* Please use 1:1 image ratio (150x150 pixel is best)</small>
                         </div>
                     </div>
                 </div>

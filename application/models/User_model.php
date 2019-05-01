@@ -99,18 +99,6 @@ class User_model extends CI_Model{
         return $result;
     }
 
-
-    public function get_project() {
-
-        $this->db->select("*");
-        $this->db->from('project');
-        $this->db->join('field_category', 'field_category.id = project.field_category');
-        $this->db->join('job_category', 'job_category.id = project.job_category');
-        $result = $this->db->get();
-
-        return $result->result_array();
-    }
-
     public function get_specific_project($project_id) {
 
         $this->db->select("*");
