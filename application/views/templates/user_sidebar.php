@@ -1,11 +1,8 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" style="margin-top:80px;">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= base_url(); ?>">
-        <!-- <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div> -->
         <div class="sidebar-brand-text mx-3">MECIN.co</div>
     </a>
 
@@ -28,17 +25,18 @@
 
     <!-- Looping Menu -->
     <?php foreach ($menu as $m) : ?>
+    <?php if($m['menu'] != 'User' && $m['menu'] != 'Project') : ?>
     <div class="sidebar-heading">
         <?= $m['menu']; ?>
     </div>
+    <?php endif; ?>
 
     <!-- Query subMenu -->
-
     <?php
         $menu_id = $m['id'];
         $querySubMenu = "SELECT * FROM `user_sub_menu`
-                          WHERE `menu_id` = $menu_id
-                           AND `is_active` = 1
+                            WHERE `menu_id` = $menu_id
+                            AND `is_active` = 1
                         ";
 
         $subMenu = $this->db->query($querySubMenu)->result_array();
@@ -46,6 +44,7 @@
 
     <!-- Looping SubMenu -->
     <?php foreach ($subMenu as $sm) : ?>
+    <?php if($sm['menu_id'] != 2 && $sm['menu_id'] != 4) : ?>
     <?php if ($title == $sm['title']) : ?>
     <li class="nav-item active">
         <?php else : ?>
@@ -57,6 +56,7 @@
     </li>
          
     <!-- Endforeach for Looping SubMenu -->
+    <?php endif; ?>
     <?php endforeach; ?>
 
     <!-- Divider -->

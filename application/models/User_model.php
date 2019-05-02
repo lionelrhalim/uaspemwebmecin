@@ -99,6 +99,52 @@ class User_model extends CI_Model{
         return $result;
     }
 
+
+    public function get_all_agent() {
+        $this->db->select('user.id, user.name, user.image, developer_profile.headline, developer_profile.rating, developer_profile.starting_bid');
+        $this->db->from('user');
+        $this->db->join('developer_profile', 'developer_profile.user_id = user.id');
+        $this->db->where('user.id >', 0);
+        $result = $this->db->get()->result_array();
+
+        return $result;
+    }
+
+    public function get_top_agent() {
+        $this->db->select('user.id, user.name, user.image, developer_profile.headline, developer_profile.rating, developer_profile.starting_bid');
+        $this->db->from('user');
+        $this->db->join('developer_profile', 'developer_profile.user_id = user.id');
+        $this->db->where('user.id >', 0);
+        $this->db->order_by('4', 'DESC');
+        $this->db->limit(6);
+        $result = $this->db->get()->result_array();
+
+        return $result;
+    }
+
+
+    public function update_wallet($user_id, $ammount) {
+
+        $wallet_now = $this->db->select('wallet')->from('user_profile')->where('user_id', $user_id)->get()->row_array();
+        $new_ammount = intval($wallet_now['wallet']) + intval($ammount);
+
+        $this->db->trans_begin();
+        $this->db->set('wallet', $new_ammount);
+        $this->db->where('user_id', $user_id);
+        $this->db->update('user_profile');
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback();
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+    }
+
+
+
     public function get_specific_project($project_id) {
 
         $this->db->select("*");

@@ -44,9 +44,11 @@ class User extends CI_Controller {
         $data['job'] = $this->db->get('job_category')->result_array();
 
 
+        $data['top_agent'] = $this->model_user->get_top_agent();
+
         // Load project, employer, and agent data
         $data['project'] = $this->model_project->get_project(0);
-        $data['countProject'] = 0;
+        $data['countProject'] = $this->model_project->count_project();
         $data['employer'] = [];
         $data['agent'] = [];
         foreach ($data['project'] as $project) {
@@ -168,11 +170,18 @@ class User extends CI_Controller {
      *      status =  2 [Paid]
      *      status =  3 [Finished]
      *      status =  4 [Satisfied]
+     *      status =  5 [Payment Checking]
     */
     public function updateProjectStatus($status, $project_id){
-        var_dump($project_id);
 
         $result = $this->model_user->update_project_status($status, $project_id);
+        
+        // If status changed to finish, transfer money to Agent Wallet
+        if($status == 4){
+            $project = $this->model_project->get_project_by_id($project_id);
+            $get_data = $this->model_user->get_user_profile($project['agent_id']);
+            $this->model_user->update_wallet($get_data['user_id'], $project['bid']);
+        }
 
         if($result == true){
             $project = $this->model_user->get_specific_project($project_id);
@@ -269,7 +278,7 @@ class User extends CI_Controller {
             $from_id = $project[0]['agent_id'];
         } elseif($project[0]['status'] == 4) {
             $inbox_title = $project[0]['project_name'] . ' [Satisfied]';
-            $inbox_description = $employer['name'] .' Accept your work. Well Done!';
+            $inbox_description = $employer['name'] .' Accept your work. Your money has been transfered to your account! Well Done!';
             $user_id = $project[0]['agent_id'];
             $from_id = $project[0]['employer_id'];
         }
@@ -281,12 +290,13 @@ class User extends CI_Controller {
         $inbox_id = $this->input->get('inbox_id');
         $project_id = $this->input->get('project_id');
 
-        $data['title'] = "Inbox Detail";
+        $data['title'] = "Inbox";
         $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
         $data['inbox_detail'] = $this->model_user->get_inbox_detail($data['user']['id'], $inbox_id, $project_id);
 
         $data['from'] = $this->model_user->get_user_profile($data['inbox_detail'][0]['from_id']);
         $data['to'] = $this->model_user->get_user_profile($data['inbox_detail'][0]['user_id']);
+
 
         $this->model_user->update_inbox_status(1, $inbox_id);
 

@@ -18,6 +18,14 @@
   border-left: .25rem solid $danger !important;
 }
 
+.border-left-dark {
+  border-left: .25rem solid $dark !important;
+}
+
+.border-left-secondary {
+  border-left: .25rem solid $secondary !important;
+}
+
 .border-bottom-primary {
   border-bottom: .25rem solid $primary !important;
 }

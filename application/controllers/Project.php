@@ -57,9 +57,12 @@ class Project extends CI_Controller {
         $data['developer'] = [];
         $data['countProposedEmployer'] = 0;
         $data['countNeedPaidEmployer'] = 0;
+        $data['countNeedReviewEmployer'] = 0;
+
         $data['countRequestedAgent'] = 0;
         $data['countOngoingAgent'] = 0;
         $data['countComplainedAgent'] = 0;
+        $data['countFinishedAgent'] = 0;
 
         //Get Employer Profile
         foreach ($data['project'] as $project) {

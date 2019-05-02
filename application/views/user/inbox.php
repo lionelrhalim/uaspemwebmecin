@@ -21,10 +21,10 @@
                     <?php $countInbox++; ?>
                     <a href="<?= base_url('user/inbox_detail?inbox_id=' . $value['inbox_id'] . '&project_id=' . $value['project_id']); ?>" class="row no-gutters card-body">
                         <?php if(!$value['inbox_status']): ?>
-                        <h6 class="col-md-2 card-text badge badge-pill badge-primary p-2">Icon</h6>
+                        <h6 class="card-text badge badge-pill badge-primary p-2 mr-3"><i class="fas fa-envelope"></i></h6>
                         <h5 class="col-md-6 card-text text-primary"> <?= $value['inbox_title']; ?> </h5>
                         <?php else: ?>
-                        <h6 class="col-md-2 card-text badge badge-pill badge-light p-2">Icon</h6>
+                        <h6 class="card-text badge badge-pill badge-primary p-2 mr-3"><i class="far fa-envelope-open"></i></h6>
                         <h5 class="col-md-6 card-text text-dark"> <?= $value['inbox_title']; ?> </h5>
                         <?php endif ?>
                         <p class="col-md-4 card-text"> <?= date('d F Y H:i:s', strtotime($value['inbox_date'])); ?> </p>
