@@ -68,7 +68,8 @@ class Auth extends CI_Controller {
                     $data = [
                         'id' => $user['id'],
                         'email' => $user['email'],
-                        'role_id' => $user['role_id']
+                        'role_id' => $user['role_id'],
+                        'is_complete' => $user['is_complete']
                     ];
 
                     // Open session
@@ -78,8 +79,10 @@ class Auth extends CI_Controller {
                     if( $user['role_id'] == 1 ){
                         redirect('admin');
                     }
-                    else {
+                    else if ( $user['is_complete'] == 1){
                         redirect('user');
+                    } else {
+                        redirect('user/form_completion');
                     }
                 } else {
 
@@ -164,7 +167,8 @@ class Auth extends CI_Controller {
                 'password' => password_hash( $this->input->post('password1'), PASSWORD_DEFAULT ),
                 'role_id' => 2,
                 'is_active' => 0,
-                'date_created' => time()
+                'date_created' => time(),
+                'is_complete' => 0
             ];
 
             //siapkan token berupa bilangan random 32 digit
@@ -313,7 +317,7 @@ class Auth extends CI_Controller {
         $this->session->set_flashdata(
             'message',
             '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                <small>You have been logout</small>
+                <small>You have been loggedout</small>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

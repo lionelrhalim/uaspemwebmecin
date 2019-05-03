@@ -12,6 +12,11 @@ class Payment_model extends CI_Model{
         return $result->result_array();
     }
 
+    public function get_bank_name(){
+        $result = $this->db->query("SELECT bank_name FROM bank")->result_array();
+        return $result;
+    }
+
     public function get_check_payment() {
         $this->db->select(  "payment_check_id as ID, project_id as Project ID, 
                             incoming as Ammount, bank_id as Bank ID, employer_id as Emp ID, 

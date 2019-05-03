@@ -23,7 +23,7 @@ class User_model extends CI_Model{
                             user_profile.bank_id,
                             user_profile.bank_account,
                             user_profile.wallet,
-                            user_profile.is_dev, ";
+                            user_profile.is_dev,";
 
         $columns_bank =    "bank.bank_name,
                             bank.bank_abv";
@@ -39,6 +39,26 @@ class User_model extends CI_Model{
         $res = $this->db->query($query)->row_array();
 
         return $res;
+    }
+
+    public function set_user_profile($user_id, $values, $is_complete){
+
+        $this->db->trans_begin();
+        $this->db->insert('user_profile', $values);
+
+        $this->db->set('is_complete', $is_complete);
+        $this->db->where('id', $user_id);
+        $this->db->update('user');
+
+        $this->db->trans_complete();
+
+        if($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return FALSE;
+        } else {
+            return TRUE;
+        }
     }
 
 
@@ -249,4 +269,5 @@ class User_model extends CI_Model{
 			return TRUE;
 		}
     }
+
 }
