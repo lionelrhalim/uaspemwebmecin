@@ -26,6 +26,7 @@ class User extends CI_Controller {
         is_logged_in();
         $this->load->model('User_model', 'model_user');
         $this->load->model('Project_model', 'model_project');
+        $this->load->model('Payment_model', 'model_payment');
     }
 
 
@@ -471,5 +472,53 @@ class User extends CI_Controller {
         $this->load->view('templates/user_topbar', $data);
         $this->load->view('user/pastproject', $data);
         $this->load->view('templates/user_footer', $data);
+    }
+
+    public function form_completion(){
+        $data['title'] = 'Complete your profile!';
+        $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
+        $data['banks'] = $this->model_payment->get_bank_name();
+        $data['view_bank'] = $this->load->view('opt/bank.php', $data, TRUE);
+
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('user/profileform', $data);
+        $this->load->view('templates/user_footer', $data);
+
+    }
+
+    public function form_completion_action(){
+
+        // $this->form_validation->set_rules('phone', 'Phone', 'required|trim|is_natural');
+        // $this->form_validation->set_rules('bank_account', 'Bank Account', 'required|trim|is_natural');
+
+        // if ($this->form_validation->run() == false) {
+        //     $this->load->view('templates/user_header', $data);
+        //     $this->load->view('templates/user_topbar', $data);
+        //     $this->load->view('user/profileform', $data);
+        //     $this->load->view('templates/user_footer', $data);
+        // } else {
+            $values = array(
+            'user_id' => $this->session->userdata('id'),
+            'phone' => $this->input->post('phone'),
+            'line' => $this->input->post('line'),
+            'instagram' => $this->input->post('instagram'),
+            'bank_id' => 1,
+            'bank_account' => $this->input->post('bank_account'),
+            'wallet' => 0,
+            'is_dev' => 0
+            );
+            $user_id = $this->session->userdata('id');
+            $is_complete = 1;
+
+            $result = $this->model_user->set_user_profile($user_id, $values, $is_complete);
+            
+            if($result){
+                header('location: '.base_url('user'));
+            }
+            else{
+                $this->index($result);
+            }
+        // }
     }
 }
