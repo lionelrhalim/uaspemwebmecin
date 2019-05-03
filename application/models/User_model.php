@@ -270,4 +270,19 @@ class User_model extends CI_Model{
 		}
     }
 
+    public function get_jobs(){
+        $result = $this->db->query("SELECT id, job_category FROM job_category")->result_array();
+        return $result;
+    }
+
+    public function get_fields(){
+        $result = $this->db->query("SELECT id, field_category FROM field_category")->result_array();
+        return $result;
+    }
+
+    public function get_skills(){
+        $result = $this->db->query("SELECT id, skill FROM developer_skill")->result_array();
+        return $result;
+    }
+
 }

@@ -503,7 +503,7 @@ class User extends CI_Controller {
             'phone' => $this->input->post('phone'),
             'line' => $this->input->post('line'),
             'instagram' => $this->input->post('instagram'),
-            'bank_id' => 1,
+            'bank_id' => 1, #$this->input->post('bank_id'), #TODO: ini masih dummy, harus diganti ambil dr database id bank nya brp.
             'bank_account' => $this->input->post('bank_account'),
             'wallet' => 0,
             'is_dev' => 0
@@ -520,5 +520,22 @@ class User extends CI_Controller {
                 $this->index($result);
             }
         // }
+    }
+
+    public function activate_developer(){
+        $data['title'] = 'Activate Developer';
+        $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
+        $data['jobs'] = $this->model_user->get_jobs();
+        $data['fields'] = $this->model_user->get_fields();
+        $data['skills'] = $this->model_user->get_skills();
+        $data['view_job'] = $this->load->view('opt/job.php', $data, TRUE);
+        $data['view_field'] = $this->load->view('opt/field.php', $data, TRUE);
+        $data['view_skill'] = $this->load->view('opt/skill.php', $data, TRUE);
+
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('user/todeveloperform', $data);
+        $this->load->view('templates/user_footer', $data);
+
     }
 }
