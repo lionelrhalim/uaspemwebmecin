@@ -31,7 +31,7 @@
 							</div>
 
 							<div class="form-group">
-								<label for="category">Bank Account</label><br>
+								<label for="bank">Bank Account</label><br>
 								<select class="form-control" name="bank" required>
 									<option value="" selected hidden>Choose Bank</option>
 									<?php echo $view_bank; ?>

@@ -13,7 +13,7 @@ class Payment_model extends CI_Model{
     }
 
     public function get_bank_name(){
-        $result = $this->db->query("SELECT bank_name FROM bank")->result_array();
+        $result = $this->db->query("SELECT id, bank_name FROM bank")->result_array();
         return $result;
     }
 
