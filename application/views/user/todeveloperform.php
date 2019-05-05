@@ -9,35 +9,46 @@
 
 						<div class="text-center">
 							<h1 class="h4 text-gray-900 mb-4">Activate Developer Mode</h1>
-							<h3 class="h3 text-gray-900 mb-4">Show us what you've got.</h3>
+							<h3 class="h5 text-gray-900 mb-4">Show us what you've got.</h3>
 						</div>
 
-						<form class="user" method="post" action="<?= base_url('user/form_completion_action'); ?>">
+						<form class="user" method="post" action="<?= base_url('user/activate_developer_action'); ?>">
+
+							<div class="form-group">
+							<input type="text" class="form-control form-control-user" id="tagline" name="tagline" placeholder="Write your Tagline" value="<?= set_value('tagline'); ?>">
+								<?php //Shows error message if any ?>
+								<?= form_error('tagline', '<small class="text-danger pl-3">* ', '</small>'); ?>
+							</div>
 
 							<div class="form-group">
 								<label for="field">What field(s) are you good at : </label><br>
-								<select class="form-control" name="field" required>
 									<?php echo $view_fields; ?>
 								</select><br>
 							</div>
 
 							<div class="form-group">
 								<label for="job">What job category are you interested in : </label><br>
-								<select class="form-control" name="job" required>
 									<?php echo $view_jobs; ?>
 								</select><br>
 							</div>
 
 							<div class="form-group">
 								<label for="skill">What skill(s) do you have : </label><br>
-								<select class="form-control" name="skill" required>
 									<?php echo $view_skill; ?>
-								</select><br>
+								<br>
+							</div>
+
+							<div class="form-group">
+							<input type="number" class="form-control form-control-user" id="fee" name="fee" placeholder="How much you want to be paid" value="<?= set_value('fee'); ?>">
+								<?php //Shows error message if any ?>
+								<?= form_error('fee', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
 
 							<button type="submit" class="btn btn-primary btn-user btn-block">
 								Done
 							</button>
+							<!-- disini harusnya kalo cancel balik ke profile lagi -->
+							<a class="btn btn-outline-light btn-user btn-block" type="button" name="btnCancel" href="<?php echo base_url('user') ?>">Cancel</a> 
 						</form>
 						<hr>
 					</div>

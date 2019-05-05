@@ -32,7 +32,7 @@
 
 							<div class="form-group">
 								<label for="bank">Bank Account</label><br>
-								<select class="form-control" name="bank" required>
+								<select class="form-control" name="bank_id" required>
 									<option value="" selected hidden>Choose Bank</option>
 									<?php echo $view_bank; ?>
 								</select><br>

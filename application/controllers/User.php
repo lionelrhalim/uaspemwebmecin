@@ -475,7 +475,7 @@ class User extends CI_Controller {
     }
 
     public function form_completion(){
-        $data['title'] = 'Complete your profile!';
+        $data['title'] = 'Complete your profile';
         $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
         $data['banks'] = $this->model_payment->get_bank_name();
         $data['view_bank'] = $this->load->view('opt/bank.php', $data, TRUE);
@@ -503,7 +503,7 @@ class User extends CI_Controller {
             'phone' => $this->input->post('phone'),
             'line' => $this->input->post('line'),
             'instagram' => $this->input->post('instagram'),
-            'bank_id' => 1, #$this->input->post('bank_id'), #TODO: ini masih dummy, harus diganti ambil dr database id bank nya brp.
+            'bank_id' => $this->input->post('bank_id'), #TODO: ini masih dummy, harus diganti ambil dr database id bank nya brp.
             'bank_account' => $this->input->post('bank_account'),
             'wallet' => 0,
             'is_dev' => 0
@@ -522,20 +522,71 @@ class User extends CI_Controller {
         // }
     }
 
+    public function check_is_dev(){
+        $user = $this->db->get_where('user_profile', ['user_id' => $this->session->userdata('id')])->row_array();
+        //var_dump($user['is_dev']);
+        if( $user['is_dev'] == 0 ){
+            redirect('user/activate_developer');
+        }
+        else if($user['is_dev'] == 1 ){
+            $user_id = $this->session->userdata('id');
+            $result = $this->model_user->deletes($user_id);
+            redirect('user/profile');
+        }
+
+    }
+
     public function activate_developer(){
         $data['title'] = 'Activate Developer';
         $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
         $data['jobs'] = $this->model_user->get_jobs();
         $data['fields'] = $this->model_user->get_fields();
         $data['skills'] = $this->model_user->get_skills();
-        $data['view_job'] = $this->load->view('opt/job.php', $data, TRUE);
-        $data['view_field'] = $this->load->view('opt/field.php', $data, TRUE);
+        $data['view_jobs'] = $this->load->view('opt/job.php', $data, TRUE);
+        $data['view_fields'] = $this->load->view('opt/field.php', $data, TRUE);
         $data['view_skill'] = $this->load->view('opt/skill.php', $data, TRUE);
 
         $this->load->view('templates/user_header', $data);
         $this->load->view('templates/user_topbar', $data);
         $this->load->view('user/todeveloperform', $data);
         $this->load->view('templates/user_footer', $data);
+
+    }
+
+    public function activate_developer_action(){
+        
+        $fields = $this->input->post('field_list');
+        $jobs = $this->input->post('job_list');
+        $skills = $this->input->post('skill_list');
+        $user_id = $this->session->userdata('id');
+        $tagline = $this->input->post('tagline');
+        $price = $this->input->post('fee');
+
+        foreach ($fields as $fields_selected) {
+            
+            $result = $this->model_user->set_fields($user_id, $fields_selected);
+        }
+
+        foreach ($jobs as $jobs_selected) {
+            
+            $result = $this->model_user->set_jobs($user_id, $jobs_selected);
+        }
+
+        foreach ($skills as $skills_selected) {
+            
+            $result = $this->model_user->set_skills($user_id, $skills_selected);
+        }
+
+        $result = $this->model_user->set_developer_profile($user_id, $tagline, $price);
+        
+
+            
+            if($result){
+                header('location: '.base_url('user'));
+            }
+            else{
+                $this->index($result);
+            }
 
     }
 }
