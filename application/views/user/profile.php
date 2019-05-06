@@ -92,6 +92,14 @@
                                         id="button-addon1">Refill</button>
                                 </div>
                             </div>
+
+                            <div style="margin-top: 20px; margin-bottom: 50px">
+                                <span style="float: left;">Developer Mode</span>
+                                <label class="switch" style="float: right;">
+                                    <input type="checkbox" name="dev" value="<?php echo base_url('user/check_is_dev') ?>" onClick="if (this.checked) { window.location = this.value; }" <?php if($user['is_dev'] == 1) echo "checked" ?>/>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
                         </p>
                         <?php endif; ?>
 

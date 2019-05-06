@@ -275,14 +275,122 @@ class User_model extends CI_Model{
         return $result;
     }
 
+    public function set_jobs($id, $job_id){
+
+        $this->db->trans_begin();
+
+        $this->db->set('user_id', $id);
+        $this->db->set('job_category_id', $job_id);
+        $this->db->insert('developer_access_job');
+ 
+        $this->db->trans_complete();
+        if($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+        
+    }
+
     public function get_fields(){
         $result = $this->db->query("SELECT id, field_category FROM field_category")->result_array();
         return $result;
     }
 
+    public function set_fields($id, $field_id){
+        $this->db->trans_begin();
+        
+        $this->db->set('user_id', $id);
+        $this->db->set('field_category_id', $field_id);
+        $this->db->insert('developer_access_field');
+ 
+        $this->db->trans_complete();
+        if($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
     public function get_skills(){
         $result = $this->db->query("SELECT id, skill FROM developer_skill")->result_array();
         return $result;
+    }
+
+    public function set_skills($id, $skill_id){
+        $this->db->trans_begin();
+        
+        $this->db->set('user_id', $id);
+        $this->db->set('developer_skill_id', $skill_id);
+        $this->db->insert('developer_access_skill');
+ 
+        $this->db->trans_complete();
+        if($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
+    public function set_developer_profile($id, $headline, $price){
+        $this->db->trans_begin();
+        
+        $this->db->set('user_id', $id);
+        $this->db->set('headline', $headline);
+        $this->db->set('starting_bid', $price);
+        $this->db->set('rating', 0);
+        $this->db->set('job_complete', 0);
+        $this->db->set('job_ongoing', 0);
+        $this->db->insert('developer_profile');
+
+        $this->db->set('is_dev', 1);
+        $this->db->where('user_id',$id);
+        $this->db->update('user_profile');
+
+ 
+        $this->db->trans_complete();
+        if($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
+    public function deletes($id){
+        $this->db->trans_begin();
+        
+        $this->db->where('user_id', $id);
+        $this->db->delete('developer_access_job');
+
+        $this->db->where('user_id', $id);
+        $this->db->delete('developer_access_field');
+
+        $this->db->where('user_id', $id);
+        $this->db->delete('developer_access_skill');
+
+        $this->db->where('user_id', $id);
+        $this->db->delete('developer_profile');
+
+        $this->db->set('is_dev', 0);
+        $this->db->where('user_id',$id);
+        $this->db->update('user_profile');
+ 
+        $this->db->trans_complete();
+        if($this->db->trans_status() === FALSE)
+        {
+            $this->db->trans_rollback();
+            return FALSE;
+        } else {
+            return TRUE;
+        }
     }
 
 }
