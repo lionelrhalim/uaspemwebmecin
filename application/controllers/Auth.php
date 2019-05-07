@@ -456,4 +456,66 @@ class Auth extends CI_Controller {
         }
     }
 
+
+    public function form_completion(){
+
+        $this->load->model('Payment_model', 'model_payment');
+
+        $data['title'] = 'Complete your profile';
+        $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
+        $data['banks'] = $this->model_payment->get_bank_name();
+        $data['view_bank'] = $this->load->view('opt/bank.php', $data, TRUE);
+
+        $this->load->view('templates/user_header', $data);
+        //$this->load->view('templates/user_topbar', $data);
+        $this->load->view('user/profileform', $data);
+        //$this->load->view('templates/user_footer', $data);
+
+    }
+
+
+    public function form_completion_action(){
+
+        $this->load->model('Payment_model', 'model_payment');
+        $this->load->model('User_model', 'model_user');
+
+        $data['title'] = 'Complete your profile';
+        $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
+        $data['banks'] = $this->model_payment->get_bank_name();
+        $data['view_bank'] = $this->load->view('opt/bank.php', $data, TRUE);
+
+         $this->form_validation->set_rules('phone', 'Phone', 'required|trim|is_natural');
+         $this->form_validation->set_rules('bank_id', 'Bank', 'required');
+         $this->form_validation->set_rules('bank_account', 'Bank Account', 'required|trim|is_natural');
+
+         if ($this->form_validation->run() == false) {
+             $this->load->view('templates/user_header', $data);
+             //$this->load->view('templates/user_topbar', $data);
+             $this->load->view('user/profileform', $data);
+             //$this->load->view('templates/user_footer', $data);
+         } else {
+            $values = array(
+            'user_id' => $this->session->userdata('id'),
+            'phone' => $this->input->post('phone'),
+            'line' => $this->input->post('line'),
+            'instagram' => $this->input->post('instagram'),
+            'bank_id' => $this->input->post('bank_id'), #TODO: ini masih dummy, harus diganti ambil dr database id bank nya brp.
+            'bank_account' => $this->input->post('bank_account'),
+            'wallet' => 0,
+            'is_dev' => 0
+            );
+            $user_id = $this->session->userdata('id');
+            $is_complete = 1;
+
+            $result = $this->model_user->set_user_profile($user_id, $values, $is_complete);
+            
+            if($result){
+                redirect('user');
+            }
+            else{
+                $this->index($result);
+            }
+         }
+    }
+
 }

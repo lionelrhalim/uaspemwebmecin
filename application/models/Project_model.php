@@ -27,8 +27,8 @@ class Project_model extends CI_Model{
 
         /*
 
-        vv 'project_id' => string '22' (length=2)
-        vv 'project_name' => string 'Build Me A News Blog' (length=20)
+        'project_id' => string '22' (length=2)
+        'project_name' => string 'Build Me A News Blog' (length=20)
         'field_category' => string 'Information and Technology' (length=26)
         'job_category' => string 'Website' (length=7)
         'deadline' => string '2019-05-06' (length=10)
@@ -45,7 +45,17 @@ class Project_model extends CI_Model{
 
         foreach ($result as $key => $value) {
             
-            if($value['status'] == 0) {
+            if($value['status'] == -4) {
+                $result[$key]['status_desc'] = 'Waiting Agent for Response';
+                $result[$key]['status_desc_agent'] = 'Waiting You for Response';
+                $result[$key]['color'] = 'danger';
+            }
+            else if($value['status'] == -1) {
+                $result[$key]['status_desc'] = 'Project Refused';
+                $result[$key]['status_desc_agent'] = 'Project Refused';
+                $result[$key]['color'] = 'danger';
+            }
+            else if($value['status'] == 0) {
                 $result[$key]['status_desc'] = 'Waiting Agent for Response';
                 $result[$key]['status_desc_agent'] = 'Waiting You for Response';
                 $result[$key]['color'] = 'dark';
@@ -108,10 +118,20 @@ class Project_model extends CI_Model{
 
         foreach ($data['countProject'] as $key => $value) {
 
-            if($value['status'] == 0) {
+            if($value['status'] == -4) {
+                $data['countProject'][$key]['status'] = 'Complained Project';
+                $data['countProject'][$key]['color'] = 'danger';
+                $data['countProject'][$key]['icon'] = 'exclamation-circle';
+            }
+            else if($value['status'] == -1) {
+                $data['countProject'][$key]['status'] = 'Project Refused';
+                $data['countProject'][$key]['color'] = 'danger';
+                $data['countProject'][$key]['icon'] = 'exclamation-circle';
+            }
+            else if($value['status'] == 0) {
                 $data['countProject'][$key]['status'] = 'Requested Project';
                 $data['countProject'][$key]['color'] = 'dark';
-                $data['countProject'][$key]['icon'] = 'clock';
+                $data['countProject'][$key]['icon'] = 'exclamation-circle';
             }
             elseif($value['status'] == 1) {
                 $data['countProject'][$key]['status'] = 'Waiting for Payment';

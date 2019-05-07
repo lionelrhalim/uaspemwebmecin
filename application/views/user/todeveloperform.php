@@ -48,7 +48,7 @@
 								Done
 							</button>
 							<!-- disini harusnya kalo cancel balik ke profile lagi -->
-							<a class="btn btn-outline-light btn-user btn-block" type="button" name="btnCancel" href="<?php echo base_url('user') ?>">Cancel</a> 
+							<a class="btn btn-outline-danger btn-user btn-block" name="btnCancel" href="<?php echo base_url('user/profile?id='.$user['id']) ?>" role="button">Cancel</a> 
 						</form>
 						<hr>
 					</div>

@@ -11,11 +11,11 @@
 							<h1 class="h4 text-gray-900 mb-4">Complete your profile!</h1>
 						</div>
 
-						<form class="user" method="post" action="<?= base_url('user/form_completion_action'); ?>">
+						<form class="user" method="post" action="<?= base_url('auth/form_completion_action'); ?>">
 							<div class="form-group">
 							<input type="text" class="form-control form-control-user" id="phone" name="phone" placeholder="Phone Number" value="<?= set_value('phone'); ?>">
 								<?php //Shows error message if any ?>
-								<?= form_error('Phone', '<small class="text-danger pl-3">* ', '</small>'); ?>
+								<?= form_error('phone', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
 
 							<div class="form-group">
@@ -32,16 +32,17 @@
 
 							<div class="form-group">
 								<label for="bank">Bank Account</label><br>
-								<select class="form-control" name="bank_id" required>
-									<option value="" selected hidden>Choose Bank</option>
+								<select id="bank_id" class="form-control" name="bank_id">
+									<option value="" hidden>Choose Bank</option>
 									<?php echo $view_bank; ?>
-								</select><br>
+								</select>
+								<?= form_error('bank_id', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
 
 							<div class="form-group">
 							<input type="text" class="form-control form-control-user" id="bank_account" name="bank_account" placeholder="Bank Account Number" value="<?= set_value('bank_account'); ?>">
 								<?php //Shows error message if any ?>
-								<?= form_error('Bank Account', '<small class="text-danger pl-3">* ', '</small>'); ?>
+								<?= form_error('bank_account', '<small class="text-danger pl-3">* ', '</small>'); ?>
 							</div>
 							
 

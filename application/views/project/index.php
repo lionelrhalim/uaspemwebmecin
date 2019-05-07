@@ -399,7 +399,7 @@
                                         <div class="row">
 
                                             <?php foreach ($project as $key=>$row): ?>
-                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] != 2 && $row['status'] != 4)): ?>
+                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] != 2 && $row['status'] != 4 && $row['status'] != -4 && $row['status'] != -1)): ?>
                                             <?php $countRequestedAgent++; ?>
                                             <div class="col-6 card-deck mx-auto">
                                                 <div class="card shadow-sm mb-3">
@@ -702,7 +702,7 @@
                                 </button>
                             </div>
 
-                            <div id="collapseFour" class="collapse show" aria-labelledby="finished_project"
+                            <div id="collapseFour" class="collapse" aria-labelledby="finished_project"
                                 data-parent="#accordionExample2">
                                 <div class="card-body">
 
@@ -710,7 +710,7 @@
                                         <div class="row">
 
                                             <?php foreach ($project as $key=>$row): ?>
-                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] == 4)): ?>
+                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] == 4 OR $row['status'] == -1)): ?>
                                             <?php $countFinishedAgent++; ?>
                                             <div class="col-6 card-deck mx-auto">
                                                 <div class="card shadow-sm mb-3">

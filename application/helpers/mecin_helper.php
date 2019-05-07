@@ -27,7 +27,18 @@ function is_logged_in(){
         if($userAccess->num_rows() < 1){
             
             redirect('auth/blocked');
-        }
+        
+        } else {
+
+            $email = $ci->session->userdata('email');
+            $user = $ci->db->get_where('user', ['email' => $email])->row_array();
+            
+            if($user['is_complete'] == 0){
+                
+                redirect('auth/form_completion');
+            
+            }
+        } 
     }
 
     function check_access($role_id, $menu_id){

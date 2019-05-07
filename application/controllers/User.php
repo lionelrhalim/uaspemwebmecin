@@ -489,15 +489,21 @@ class User extends CI_Controller {
 
     public function form_completion_action(){
 
-        // $this->form_validation->set_rules('phone', 'Phone', 'required|trim|is_natural');
-        // $this->form_validation->set_rules('bank_account', 'Bank Account', 'required|trim|is_natural');
+        $data['title'] = 'Complete your profile';
+        $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
+        $data['banks'] = $this->model_payment->get_bank_name();
+        $data['view_bank'] = $this->load->view('opt/bank.php', $data, TRUE);
 
-        // if ($this->form_validation->run() == false) {
-        //     $this->load->view('templates/user_header', $data);
-        //     $this->load->view('templates/user_topbar', $data);
-        //     $this->load->view('user/profileform', $data);
-        //     $this->load->view('templates/user_footer', $data);
-        // } else {
+         $this->form_validation->set_rules('phone', 'Phone', 'required|trim|is_natural');
+         $this->form_validation->set_rules('bank_id', 'Bank', 'required|trim|is_natural');
+         $this->form_validation->set_rules('bank_account', 'Bank Account', 'required|trim|is_natural');
+
+         if ($this->form_validation->run() == false) {
+             $this->load->view('templates/user_header', $data);
+             //$this->load->view('templates/user_topbar', $data);
+             $this->load->view('user/profileform', $data);
+             //$this->load->view('templates/user_footer', $data);
+         } else {
             $values = array(
             'user_id' => $this->session->userdata('id'),
             'phone' => $this->input->post('phone'),
@@ -519,7 +525,7 @@ class User extends CI_Controller {
             else{
                 $this->index($result);
             }
-        // }
+         }
     }
 
     public function check_is_dev(){

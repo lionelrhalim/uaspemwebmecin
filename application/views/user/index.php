@@ -92,12 +92,6 @@
     <?php ## CAROUSEL ROW ## ?>
     <div class="row">
 
-        <?php ## Section Heading ## ?>
-        <div class="col-12">
-            <h1 class="mb-4 font-heading-primary">Feeds</h1>
-        </div>
-
-
         <?php ## Carousel ## ?>
         <div class="col-12 mx-auto mb-5">
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -108,15 +102,13 @@
                 </ol>
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="https://via.placeholder.com/1920x300?text=Dijual Lionel" class="d-block w-100"
-                            alt="...">
+                        <img src="<?= base_url('assets/img/poster/') ?>promo1.jpg" class="d-block w-100">
                     </div>
                     <div class="carousel-item">
-                        <img src="https://via.placeholder.com/1920x300?text=Dijual Calvin" class="d-block w-100"
-                            alt="...">
+                        <img src="<?= base_url('assets/img/poster/') ?>promo2.jpg" class="d-block w-100">
                     </div>
                     <div class="carousel-item">
-                        <img src="https://via.placeholder.com/1920x300?text=Promo 3" class="d-block w-100" alt="...">
+                        <img src="<?= base_url('assets/img/poster/') ?>promo3.jpg" class="d-block w-100">
                     </div>
                 </div>
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
