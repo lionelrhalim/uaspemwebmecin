@@ -46,10 +46,10 @@
                             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">asfa</a>
+                            <a class="nav-link" href="#">F.A.Q.</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Menu 2</a>
+                            <a class="nav-link" href="#">About</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>

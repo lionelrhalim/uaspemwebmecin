@@ -339,58 +339,97 @@ class User_model extends CI_Model{
     }
 
     public function set_developer_profile($id, $headline, $price){
-        $this->db->trans_begin();
+
+
+
+        $check_id = $this->db->get_where('developer_profile', ['user_id' => $id]);
+
+        if(!$check_id) {
+
+            $this->db->trans_begin();
         
-        $this->db->set('user_id', $id);
-        $this->db->set('headline', $headline);
-        $this->db->set('starting_bid', $price);
-        $this->db->set('rating', 0);
-        $this->db->set('job_complete', 0);
-        $this->db->set('job_ongoing', 0);
-        $this->db->insert('developer_profile');
+            $this->db->set('user_id', $id);
+            $this->db->set('headline', $headline);
+            $this->db->set('starting_bid', $price);
+            $this->db->set('rating', 0);
+            $this->db->set('job_complete', 0);
+            $this->db->set('job_ongoing', 0);
+            $this->db->insert('developer_profile');
+
+            $this->db->set('is_dev', 1);
+            $this->db->where('user_id',$id);
+            $this->db->update('user_profile');
+
+    
+            $this->db->trans_complete();
+
+            if($this->db->trans_status() === FALSE) {
+
+                $this->db->trans_rollback();
+                return FALSE;
+            
+            } else 
+                return TRUE;
+
+        } else {
+
+            $this->db->trans_begin();
+        
+            $this->db->set('headline', $headline);
+            $this->db->set('starting_bid', $price);
+            $this->db->set('rating', 0);
+            $this->db->where('user_id',$id);
+            $this->db->update('developer_profile');
+
+            $this->db->trans_complete();
+
+            if($this->db->trans_status() === FALSE) {
+
+                $this->db->trans_rollback();
+                return FALSE;
+            
+            } else 
+                return TRUE;
+
+        }
+    }
+
+    public function activate_developer($id) {
 
         $this->db->set('is_dev', 1);
         $this->db->where('user_id',$id);
         $this->db->update('user_profile');
+        
+    }
 
- 
+    public function deletes($id) {
+
+        $this->db->trans_begin();
+        
+        $this->db->set('is_dev', 0);
+        $this->db->where('user_id',$id);
+        $this->db->update('user_profile');
+
         $this->db->trans_complete();
-        if($this->db->trans_status() === FALSE)
-        {
+
+        if($this->db->trans_status() === FALSE) {
+
             $this->db->trans_rollback();
             return FALSE;
+
         } else {
             return TRUE;
         }
     }
 
-    public function deletes($id){
-        $this->db->trans_begin();
-        
-        $this->db->where('user_id', $id);
-        $this->db->delete('developer_access_job');
+    public function is_previous_dev($id) {
 
-        $this->db->where('user_id', $id);
-        $this->db->delete('developer_access_field');
+        $result = $this->db->get_where('developer_profile', ['user_id' => $id])->row_array();
 
-        $this->db->where('user_id', $id);
-        $this->db->delete('developer_access_skill');
-
-        $this->db->where('user_id', $id);
-        $this->db->delete('developer_profile');
-
-        $this->db->set('is_dev', 0);
-        $this->db->where('user_id',$id);
-        $this->db->update('user_profile');
- 
-        $this->db->trans_complete();
-        if($this->db->trans_status() === FALSE)
-        {
-            $this->db->trans_rollback();
-            return FALSE;
-        } else {
+        if($result > 0)
             return TRUE;
-        }
+        else
+            return FALSE;
     }
 
 }

@@ -45,7 +45,12 @@ class Project_model extends CI_Model{
 
         foreach ($result as $key => $value) {
             
-            if($value['status'] == -4) {
+            if($value['status'] == -99) {
+                $result[$key]['status_desc'] = 'Project Canceled';
+                $result[$key]['status_desc_agent'] = 'Project Canceled';
+                $result[$key]['color'] = 'danger';
+            }
+            else if($value['status'] == -4) {
                 $result[$key]['status_desc'] = 'Waiting Agent for Response';
                 $result[$key]['status_desc_agent'] = 'Waiting You for Response';
                 $result[$key]['color'] = 'danger';
@@ -118,7 +123,12 @@ class Project_model extends CI_Model{
 
         foreach ($data['countProject'] as $key => $value) {
 
-            if($value['status'] == -4) {
+            if($value['status'] == -99) {
+                $data['countProject'][$key]['status'] = 'Canceled Project';
+                $data['countProject'][$key]['color'] = 'danger';
+                $data['countProject'][$key]['icon'] = 'exclamation-circle';
+            }
+            else if($value['status'] == -4) {
                 $data['countProject'][$key]['status'] = 'Complained Project';
                 $data['countProject'][$key]['color'] = 'danger';
                 $data['countProject'][$key]['icon'] = 'exclamation-circle';
@@ -161,6 +171,13 @@ class Project_model extends CI_Model{
         }
 
         return $data['countProject'];
+    }
+
+    public function cancel_project($project_id) {
+
+        $this->db->where('project_id', $project_id);
+        $this->db->update('project', ['status' => -99]);
+
     }
 
 }

@@ -78,8 +78,11 @@
                         <hr>
 
                         <?php if($user['hide_wallet'] === 0): ?>
-                        <p class="card-text text-left">
-                            Your <span class="font-weight-bold">MecinPowder<sup>&reg;</sup></span>
+                        <div class="card-text text-left">
+                            <div class="my-2">
+                                Your <span class="font-weight-bold">MecinPowder<sup>&reg;</sup></span>
+                            </div>
+                            
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text font-light"
@@ -93,14 +96,21 @@
                                 </div>
                             </div>
 
-                            <div style="margin-top: 20px; margin-bottom: 50px">
-                                <span style="float: left;">Developer Mode</span>
-                                <label class="switch" style="float: right;">
-                                    <input type="checkbox" name="dev" value="<?php echo base_url('user/check_is_dev') ?>" onClick="if (this.checked) { window.location = this.value; }" <?php if($user['is_dev'] == 1) echo "checked" ?>/>
+                            <div class="mt-3">
+                                Developer Mode
+                                <label class="switch float-right">
+                                    <input type="checkbox" name="dev" value="<?php echo base_url('user/check_is_dev') ?>" onClick=" window.location = this.value; " <?php if($user['is_dev'] == 1) echo "checked" ?>>
                                     <span class="slider round"></span>
                                 </label>
                             </div>
-                        </p>
+
+                            <?php if($user['is_dev']) : ?> 
+                            <div class="mt-3 text-right">
+                                <a href="edit_developer_profile"><small>Edit Developer Profile <i class="fas fa-edit"></i></small></a>
+                            </div>
+                            <?php endif; ?>
+                            
+                        </div>
                         <?php endif; ?>
 
                         <?php if ($user['is_dev'] === 1) : ?>

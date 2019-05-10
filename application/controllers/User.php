@@ -98,6 +98,9 @@ class User extends CI_Controller {
         $get_id = $this->input->get('id');
         $sid = $this->session->userdata('id');
 
+        if (!isset($get_id))
+            $get_id = $sid;
+
         $result = $this->model_user->get_user_profile($sid);
         $data['user'] = $result;
         $data['user']['id'] = $sid;
@@ -528,12 +531,14 @@ class User extends CI_Controller {
          }
     }
 
-    public function check_is_dev(){
+    public function check_is_dev() {
+
         $user = $this->db->get_where('user_profile', ['user_id' => $this->session->userdata('id')])->row_array();
-        //var_dump($user['is_dev']);
+        
         if( $user['is_dev'] == 0 ){
             redirect('user/activate_developer');
         }
+
         else if($user['is_dev'] == 1 ){
             $user_id = $this->session->userdata('id');
             $result = $this->model_user->deletes($user_id);
@@ -543,56 +548,118 @@ class User extends CI_Controller {
     }
 
     public function activate_developer(){
-        $data['title'] = 'Activate Developer';
-        $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
-        $data['jobs'] = $this->model_user->get_jobs();
-        $data['fields'] = $this->model_user->get_fields();
-        $data['skills'] = $this->model_user->get_skills();
-        $data['view_jobs'] = $this->load->view('opt/job.php', $data, TRUE);
-        $data['view_fields'] = $this->load->view('opt/field.php', $data, TRUE);
-        $data['view_skill'] = $this->load->view('opt/skill.php', $data, TRUE);
 
-        $this->load->view('templates/user_header', $data);
-        $this->load->view('templates/user_topbar', $data);
-        $this->load->view('user/todeveloperform', $data);
-        $this->load->view('templates/user_footer', $data);
+        $data['title'] = 'Activate Developer';
+
+        $user = $this->db->get_where('user_profile', ['user_id' => $this->session->userdata('id')])->row_array();
+
+        if($this->model_user->is_previous_dev($user['user_id'])){
+        
+            $this->model_user->activate_developer($user['user_id']);
+            redirect('user/profile');
+        
+        } else {   
+
+            $data['user'] = $this->db->get_where('user',['email' => $this->session->userdata('email')]) ->row_array();
+            $data['jobs'] = $this->model_user->get_jobs();
+            $data['fields'] = $this->model_user->get_fields();
+            $data['skills'] = $this->model_user->get_skills();
+
+            $data['view_jobs'] = $this->load->view('opt/job.php', $data, TRUE);
+            $data['view_fields'] = $this->load->view('opt/field.php', $data, TRUE);
+            $data['view_skill'] = $this->load->view('opt/skill.php', $data, TRUE);
+
+            $this->load->view('templates/user_header', $data);
+            $this->load->view('templates/user_topbar', $data);
+            $this->load->view('user/todeveloperform', $data);
+            $this->load->view('templates/user_footer', $data);
+        }
 
     }
 
-    public function activate_developer_action(){
+    public function edit_developer_profile() {
+
+        $data['title'] = 'Developer Profile';
+
+        $data['check_is_dev'] = $this->db->get_where('user_profile',['user_id' => $this->session->userdata('id'), 'is_dev' => 1])->row_array();
+        $data['user'] = $this->db->get_where('user',['id' => $this->session->userdata('id')])->row_array();
         
-        $fields = $this->input->post('field_list');
-        $jobs = $this->input->post('job_list');
-        $skills = $this->input->post('skill_list');
-        $user_id = $this->session->userdata('id');
-        $tagline = $this->input->post('tagline');
-        $price = $this->input->post('fee');
+        if(!$data['check_is_dev'])
+            redirect('user/profile');
 
-        foreach ($fields as $fields_selected) {
-            
-            $result = $this->model_user->set_fields($user_id, $fields_selected);
-        }
-
-        foreach ($jobs as $jobs_selected) {
-            
-            $result = $this->model_user->set_jobs($user_id, $jobs_selected);
-        }
-
-        foreach ($skills as $skills_selected) {
-            
-            $result = $this->model_user->set_skills($user_id, $skills_selected);
-        }
-
-        $result = $this->model_user->set_developer_profile($user_id, $tagline, $price);
+        $this->form_validation->set_rules('tagline', 'Headline', 'required');
+        $this->form_validation->set_rules('fee', 'Bid', 'required');
         
+        if($this->form_validation->run() == false) {
 
+            $data['dev'] = $this->db->get_where('developer_profile',['user_id' => $this->session->userdata('id')])->row_array();
+
+            $data['tagline'] = $data['dev']['headline'];
+            if(!$data['tagline'])
+                $data['tagline'] = "Write your headline";
+                
+            $data['fee'] = $data['dev']['starting_bid'];
+                if(!$data['fee'])
+                    $data['fee'] = "Enter your starting bid";
+
+            $data['jobs'] = $this->model_user->get_jobs();
+            $data['fields'] = $this->model_user->get_fields();
+            $data['skills'] = $this->model_user->get_skills();
+
+            $data['view_jobs'] = $this->load->view('opt/job.php', $data, TRUE);
+            $data['view_fields'] = $this->load->view('opt/field.php', $data, TRUE);
+            $data['view_skill'] = $this->load->view('opt/skill.php', $data, TRUE);
+
+            $this->load->view('templates/user_header', $data);
+            $this->load->view('templates/user_topbar', $data);
+            $this->load->view('user/todeveloperform', $data);
+            $this->load->view('templates/user_footer', $data);
+
+        } else {
+
+            $fields = $this->input->post('field_list', TRUE);
+            $jobs = $this->input->post('job_list', TRUE);
+            $skills = $this->input->post('skill_list', TRUE);
+            $user_id = $this->session->userdata('id');
+            $tagline = $this->input->post('tagline', TRUE);
+            $price = $this->input->post('fee', TRUE);
+    
+            foreach ($fields as $fields_selected) {
+                
+                $result = $this->model_user->set_fields($user_id, $fields_selected);
+            }
+    
+            foreach ($jobs as $jobs_selected) {
+                
+                $result = $this->model_user->set_jobs($user_id, $jobs_selected);
+            }
+    
+            foreach ($skills as $skills_selected) {
+                
+                $result = $this->model_user->set_skills($user_id, $skills_selected);
+            }
+    
+            $result = $this->model_user->set_developer_profile($user_id, $tagline, $price);
+
+            $this->session->set_flashdata(
+                'message',
+                '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <small>Your Developer Profile Has Been Updated</small>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>'
+            );
             
             if($result){
-                header('location: '.base_url('user'));
+                redirect('user?id='.$data['user']['id']);
             }
             else{
                 $this->index($result);
             }
 
+        }
+
     }
+
 }

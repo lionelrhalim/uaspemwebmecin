@@ -142,8 +142,78 @@ class Project extends CI_Controller {
                 'agent_id'          => $agent_id,
             ];
 
-            $this->db->insert('project', $data);
+        $this->db->insert('project', $data);
 
+        redirect('project/cart');
+
+        }
+    }
+
+    public function cart() {
+
+        $data['user'] = $this->model_user->get_user();
+        $contact_id = $this->session->userdata('agent_id');
+
+        $this->session->unset_userdata('agent_id');
+
+        if($contact_id == NULL)
+            redirect('user');
+
+        $this->form_validation->set_rules('projectname', 'Project Name', 'required');
+        $this->form_validation->set_rules('desc', 'Description', 'required');
+        $this->form_validation->set_rules('field_category', 'Field Category', 'required');
+        $this->form_validation->set_rules('job_category', 'Job Category', 'required');
+        $this->form_validation->set_rules('times', 'Deadline', 'required|callback_date_check');
+        $this->form_validation->set_rules('price', 'Price', 'required');
+        $this->form_validation->set_rules('confirm', 'Confirm', 'required');
+
+        if($this->form_validation->run() == false){
+
+            $project_id = $this->model_project->get_latest_project();
+            $project = $this->model_project->get_project_by_id($project_id['project_id']);
+
+            $data = [
+                'project_name'      => $project['project_name'],
+                'field_category'    => $project['field_category'],
+                'job_category'      => $project['job_category'],
+                'deadline'          => $project['deadline'],
+                'bid'               => $project['bid'],
+                'description'       => $project['description']
+            ];
+
+            $data['user'] = $this->model_user->get_user();
+            
+            $data['title'] = 'Cart | MECIN.co';
+            $data['field'] = $this->db->get('field_category')->result_array();
+            $data['job'] = $this->db->get('job_category')->result_array();
+            $data['user']['contact_id'] = $contact_id;
+            $data['user']['contact_name'] = $this->model_user->get_agent_profile($contact_id);
+    
+            $this->load->view('templates/user_header', $data);
+            $this->load->view('templates/user_topbar', $data);
+            $this->load->view('templates/user_navbar', $data);
+            $this->load->view('project/cart', $data);
+            $this->load->view('templates/user_footer', $data);
+
+        } else{
+            
+            $status = 0;
+            $employer_id = $data['user']['id'];
+            $agent_id = $this->input->get('id');
+
+            $data = [
+                'project_name'      => $this->input->post('projectname', TRUE),
+                'field_category'    => $this->input->post('field_category', TRUE),
+                'job_category'      => $this->input->post('job_category', TRUE),
+                'deadline'          => $this->input->post('times', TRUE),
+                'bid'               => $this->input->post('price', TRUE),
+                'description'       => $this->input->post('desc', TRUE),
+                'status'            => $status,
+                'employer_id'       => $employer_id,
+                'agent_id'          => $agent_id,
+            ];
+
+            $this->db->insert('project', $data);
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -153,11 +223,11 @@ class Project extends CI_Controller {
                     </button>
                 </div>'
             );
-
+    
             $project_id = $this->model_project->get_latest_project();
             $project = $this->model_project->get_project_by_id($project_id['project_id']);
             $send_result = $this->send_inbox($project);
-
+    
             if($send_result) {
                 redirect('user');
             } else {
@@ -252,4 +322,19 @@ class Project extends CI_Controller {
         return $this->model_user->set_inbox($inbox_title, $inbox_description, $project_id, $user_id, $from_id);
     }
     
+
+    /*
+     * Name = cancel() method
+     * Description
+     *      User cancel the project
+    */
+    public function cancel() {
+
+        $project_id = $this->session->userdata('project_id');
+        $this->session->unset_userdata('project_id');
+
+        $this->model_project->cancel_project($project_id);
+
+        redirect('project');
+    }
 }

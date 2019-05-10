@@ -12,6 +12,10 @@
 
                     <form action="<?= base_url('project/propose?id='.$user['contact_id']); ?>" method="post">
 
+                        <?php 
+                            $this->session->set_userdata(['agent_id' => $user['contact_id']]);
+                        ?>
+
                         <div class="form-group">
                             <label for="agent"><strong>Propose to</strong></label>
                             <input type="text" class="form-control" id="agent"

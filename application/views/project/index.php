@@ -122,14 +122,12 @@
                                                                 </div>
 
                                                                 <div class="row justify-content-center">
-                                                                    <?php if($row['status'] == 3): ?>
-                                                                    <a href="<?= base_url('user/updateProjectStatus/4/' . $row['project_id'] . '/') ?>"
-                                                                        class="btn btn-success mx-1" role="button"
-                                                                        style="width:7rem; margin-top:1rem;">Satisfied</a>
-                                                                    <a href="<?= base_url('user/updateProjectStatus/-4/' . $row['project_id'] . '/') ?>"
+                                                                    <a href="<?php 
+                                                                        $this->session->set_userdata(['project_id' => $row['project_id']]);
+                                                                        echo base_url('project/cancel');
+                                                                        ?>"
                                                                         class="btn btn-danger mx-1" role="button"
-                                                                        style="width:7rem; margin-top:1rem;">Complain</a>
-                                                                    <?php endif ?>
+                                                                        style="width:7rem; margin-top:1rem;">Cancel</a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -287,7 +285,7 @@
                                         <div class="row">
 
                                             <?php foreach ($project as $key=>$row): ?>
-                                            <?php if($row['employer_id'] == $user['id']  && ($row['status'] == '3' OR $row['status'] == '4')): ?>
+                                            <?php if($row['employer_id'] == $user['id']  && ($row['status'] == '3' OR $row['status'] == '4' OR $row['status'] == '-1' OR $row['status'] == '-99')): ?>
                                             <?php $countNeedReviewEmployer++; ?>
                                             <div class="col-6 card-deck mx-auto">
                                                 <div class="card shadow-sm mb-3">
@@ -399,7 +397,7 @@
                                         <div class="row">
 
                                             <?php foreach ($project as $key=>$row): ?>
-                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] != 2 && $row['status'] != 4 && $row['status'] != -4 && $row['status'] != -1)): ?>
+                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] != 2 && $row['status'] != 4 && $row['status'] != -4 && $row['status'] != -1 && $row['status'] != -99)): ?>
                                             <?php $countRequestedAgent++; ?>
                                             <div class="col-6 card-deck mx-auto">
                                                 <div class="card shadow-sm mb-3">
@@ -710,7 +708,7 @@
                                         <div class="row">
 
                                             <?php foreach ($project as $key=>$row): ?>
-                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] == 4 OR $row['status'] == -1)): ?>
+                                            <?php if($row['agent_id'] == $user['id'] && ($row['status'] == 4 OR $row['status'] == -1 OR $row['status'] == -99)): ?>
                                             <?php $countFinishedAgent++; ?>
                                             <div class="col-6 card-deck mx-auto">
                                                 <div class="card shadow-sm mb-3">
