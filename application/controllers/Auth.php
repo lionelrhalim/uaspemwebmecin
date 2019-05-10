@@ -20,7 +20,6 @@ class Auth extends CI_Controller {
     }
 
 
-
     // Default method
     public function index() {
 
