@@ -126,7 +126,6 @@ class Project extends CI_Controller {
 
         } else{
             
-            $status = 0;
             $employer_id = $data['user']['id'];
             $agent_id = $this->input->get('id');
 
@@ -137,69 +136,140 @@ class Project extends CI_Controller {
                 'deadline'          => $this->input->post('times', TRUE),
                 'bid'               => $this->input->post('price', TRUE),
                 'description'       => $this->input->post('desc', TRUE),
-                'status'            => $status,
                 'employer_id'       => $employer_id,
                 'agent_id'          => $agent_id,
             ];
 
-        $this->db->insert('project', $data);
-
-        redirect('project/cart');
-
+            $cart_id = $this->model_project->add_to_cart($data);
+            $_SESSION['cart_id'] = $cart_id;
+            redirect('project/cart');
+            
         }
     }
-
+    
     public function cart() {
+                
+        if(isset($_GET['id'])) {
+            
+            if(is_can_access_cart()) {
+
+                $data['user'] = $this->model_user->get_user();
+                $cart_id = $_GET['id'];
+                $data['project'] = $this->model_project->get_from_cart($cart_id);
+
+                $data['title'] = 'Cart | MECIN.co';
+
+                $this->load->view('templates/user_header', $data);
+                $this->load->view('templates/user_topbar', $data);
+                $this->load->view('templates/user_navbar', $data);
+                $this->load->view('project/cart', $data);
+                $this->load->view('templates/user_footer', $data);
+
+            } else {
+                
+                msg_check_url();
+                redirect('project/my_cart');
+            
+            }
+        }
+
+        else
+            redirect('project/my_cart');
+    
+    }
+
+
+
+
+
+
+    public function my_cart() {
+
+        $data['title'] = "Cart";
 
         $data['user'] = $this->model_user->get_user();
-        $contact_id = $this->session->userdata('agent_id');
+        $data['user']['profile'] = $this->model_user->get_user_profile($data['user']['id']);
 
-        $this->session->unset_userdata('agent_id');
+        $sort = 0;
+        if(isset($_GET['sort'])) {
+            $sort = $_GET['sort'];
+            $sort = intval($sort);
 
-        if($contact_id == NULL)
-            redirect('user');
+            if($sort < 0 OR $sort > 2)
+                $sort = 0;
+        }
 
+        $data['cart'] = $this->model_project->get_all_cart($sort);
+        $data['countCart'] = 0;
+
+        //Load the header
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('templates/user_navbar', $data);
+
+        $this->load->view('project/my_cart', $data);
+
+        //Load the footer
+        $this->load->view('templates/user_footer', $data);
+        
+    }
+
+
+
+    public function cancel_cart() {
+
+        if(isset($_GET['id'])) {
+
+            if(is_can_access_cart()){
+              
+                $this->model_project->delete_cart($_GET['id']);
+                redirect('project/my_cart');
+
+            } else {
+                
+                msg_check_url();
+                redirect('project/my_cart');
+            
+            }
+        }
+
+        else
+            redirect('project/my_cart');
+
+    }
+
+
+
+
+
+    public function post() {
+
+        $data['user'] = $this->model_user->get_user();
+
+        $this->form_validation->set_rules('agent_id', 'Agent', 'required');
         $this->form_validation->set_rules('projectname', 'Project Name', 'required');
         $this->form_validation->set_rules('desc', 'Description', 'required');
         $this->form_validation->set_rules('field_category', 'Field Category', 'required');
         $this->form_validation->set_rules('job_category', 'Job Category', 'required');
         $this->form_validation->set_rules('times', 'Deadline', 'required|callback_date_check');
         $this->form_validation->set_rules('price', 'Price', 'required');
-        $this->form_validation->set_rules('confirm', 'Confirm', 'required');
 
+        
         if($this->form_validation->run() == false){
 
-            $project_id = $this->model_project->get_latest_project();
-            $project = $this->model_project->get_project_by_id($project_id['project_id']);
-
-            $data = [
-                'project_name'      => $project['project_name'],
-                'field_category'    => $project['field_category'],
-                'job_category'      => $project['job_category'],
-                'deadline'          => $project['deadline'],
-                'bid'               => $project['bid'],
-                'description'       => $project['description']
-            ];
-
-            $data['user'] = $this->model_user->get_user();
-            
-            $data['title'] = 'Cart | MECIN.co';
+            $data['title'] = 'Project | MECIN.co';
             $data['field'] = $this->db->get('field_category')->result_array();
             $data['job'] = $this->db->get('job_category')->result_array();
-            $data['user']['contact_id'] = $contact_id;
-            $data['user']['contact_name'] = $this->model_user->get_agent_profile($contact_id);
+            $data['user']['contact_id'] = $this->input->post('agent_id', TRUE);
+            $data['user']['contact_name'] = $this->model_user->get_agent_profile($this->input->post('agent_id', TRUE));
     
             $this->load->view('templates/user_header', $data);
             $this->load->view('templates/user_topbar', $data);
             $this->load->view('templates/user_navbar', $data);
-            $this->load->view('project/cart', $data);
+            $this->load->view('project/propose', $data);
             $this->load->view('templates/user_footer', $data);
 
         } else{
-            
-            $status = 0;
-            $employer_id = $data['user']['id'];
-            $agent_id = $this->input->get('id');
 
             $data = [
                 'project_name'      => $this->input->post('projectname', TRUE),
@@ -208,12 +278,15 @@ class Project extends CI_Controller {
                 'deadline'          => $this->input->post('times', TRUE),
                 'bid'               => $this->input->post('price', TRUE),
                 'description'       => $this->input->post('desc', TRUE),
-                'status'            => $status,
-                'employer_id'       => $employer_id,
-                'agent_id'          => $agent_id,
+                'status'            => 0,
+                'employer_id'       => $data['user']['id'],
+                'agent_id'          => $this->input->post('agent_id', TRUE)
             ];
 
-            $this->db->insert('project', $data);
+            $this->model_project->post_project($data);
+
+            unset($_SESSION['cart_id']);
+
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -223,11 +296,11 @@ class Project extends CI_Controller {
                     </button>
                 </div>'
             );
-    
+
             $project_id = $this->model_project->get_latest_project();
             $project = $this->model_project->get_project_by_id($project_id['project_id']);
             $send_result = $this->send_inbox($project);
-    
+
             if($send_result) {
                 redirect('user');
             } else {
@@ -235,7 +308,10 @@ class Project extends CI_Controller {
             }
 
         }
+
     }
+
+
 
     public function date_check($date) {
 
@@ -332,7 +408,7 @@ class Project extends CI_Controller {
 
         $project_id = $this->session->userdata('project_id');
         $this->session->unset_userdata('project_id');
-
+        
         $this->model_project->cancel_project($project_id);
 
         redirect('project');

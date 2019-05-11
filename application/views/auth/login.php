@@ -3,7 +3,7 @@
 	<!-- Outer Row -->
 	<div class="row justify-content-center">
 
-		<div class="col-12 col-md-6">
+		<div class="col-12 col-lg-6">
 
 			<div class="text-center my-4">
 				<a href="<?= base_url(); ?>">

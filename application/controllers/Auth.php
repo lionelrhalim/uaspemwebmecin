@@ -316,7 +316,7 @@ class Auth extends CI_Controller {
         $this->session->set_flashdata(
             'message',
             '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                <small>You have been loggedout</small>
+                <small>You have been logged out</small>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

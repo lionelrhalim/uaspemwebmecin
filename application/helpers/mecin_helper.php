@@ -53,3 +53,65 @@ function is_logged_in(){
         }
     }
 }
+
+function is_can_access_cart() {
+
+    $th1s = get_instance();
+
+     /*
+        * ambil user model
+        * ambil get id
+        * ambil tabel cart dengan id
+        * cek apakah bisa akses
+    */
+
+    $data['user'] = $th1s->model_user->get_user();
+    $cart_id = $_GET['id'];
+    $cart_data = $th1s->model_project->get_from_cart($cart_id);
+    
+    if($cart_data['employer_id'] === $data['user']['id'])
+        return TRUE;
+    else
+        return FALSE;
+
+
+}
+
+function is_can_access_project() {
+
+    $th1s = get_instance();
+
+     /*
+        * ambil user model
+        * ambil get id
+        * ambil tabel cart dengan id
+        * cek apakah bisa akses
+    */
+
+    $data['user'] = $th1s->model_user->get_user();
+    $cart_id = $_GET['id'];
+    $cart_data = $th1s->model_project->get_from_cart($cart_id);
+    
+    if($cart_data['employer_id'] === $data['user']['id'])
+        return TRUE;
+    else
+        return FALSE;
+
+
+}
+
+function msg_check_url() {
+
+    $th1s = get_instance();
+
+    $th1s->session->set_flashdata(
+        'message',
+        '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <small>Please check your URL!</small>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>'
+    );
+
+}

@@ -180,4 +180,81 @@ class Project_model extends CI_Model{
 
     }
 
+    public function add_to_cart($data) {
+
+        $this->db->insert('cart', $data);
+        $cart = $this->db->get_where('cart', ['project_name' => $data['project_name']])->row_array();
+
+        return $cart['cart_id'];
+
+    }
+
+    public function get_from_cart($cart_id) {
+        
+        //$result = array();
+        $result = $this->db->get_where('cart', ['cart_id' => $cart_id])->row_array();
+        $employer = $this->db->select('name')->get_where('user', ['id' => $result['employer_id']])->row_array();
+        $agent = $this->db->select('name, image')->get_where('user', ['id' => $result['agent_id']])->row_array();
+        $agent_profile = $this->db->select('headline, rating')->get_where('developer_profile', ['user_id' => $result['agent_id']])->row_array();
+        $field = $this->db->select('field_category')->get_where('field_category', ['id' => $result['field_category']])->row_array();
+        $job = $this->db->select('job_category')->get_where('job_category', ['id' => $result['job_category']])->row_array();
+        
+        $result['employer_name'] = $employer['name'];
+        $result['agent_name'] = $agent['name'];
+        $result['agent_photo'] = $agent['image'];
+        $result['agent_headline'] = $agent_profile['headline'];
+        $result['agent_rating'] = $agent_profile['rating'];
+        $result['field'] = $field['field_category'];
+        $result['job'] = $job['job_category'];
+
+        return $result;
+
+    }
+
+    public function post_project($data) {
+
+        $this->db->insert('project', $data);
+        $this->db->delete('cart', ['project_name' => $data['project_name']]);
+    
+    }
+
+    public function get_all_cart($sort) {
+        
+        if($sort == 1) {
+            $sort = 'cart_id';
+            $sort_by = 'DESC';
+        }
+        elseif($sort == 2) {
+            $sort = 'project_name';
+            $sort_by = 'ASC';
+        }
+        elseif($sort == 0) {
+            $sort = 'cart_id';
+            $sort_by = 'ASC';
+        }
+
+        $this->db->select("*");
+        $this->db->from('cart');
+        $this->db->order_by($sort, $sort_by);
+        $result = $this->db->get()->result_array();
+
+        if($result){
+            foreach ($result as $key => $value) {
+             
+                $agent = $this->db->select('name, image')->get_where('user', ['id' => $value['agent_id']])->row_array();
+                $result[$key]['agent_name'] = $agent['name'];
+
+            }
+        }
+
+        return $result;
+
+    }
+
+    public function delete_cart($cart_id) {
+
+        $this->db->delete('cart', ['cart_id' => $cart_id]);
+
+    }
+
 }
