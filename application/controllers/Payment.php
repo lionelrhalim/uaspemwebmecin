@@ -62,86 +62,112 @@ class Payment extends CI_Controller {
 
     public function pay() {
 
-        if(isset($_GET['project']))
-            $project_id = $_GET['project'];
+
+        if(isset($_GET['id'])) {
+
+            if(is_can_access_project()){
+
+                $project_id = $_GET['id'];
+                $data['title'] = "Project";
+
+                $data['user'] = $this->model_user->get_user();
+                $data['project'] = $this->model_project->get_project_by_id($project_id);
+                $data['project']['agent'] = $this->model_user->get_agent_profile($data['project']['agent_id']);
+                $data['bank'] = $this->model_payment->get_bank();
+
+                $this->load->view('templates/user_header', $data);
+                $this->load->view('templates/user_topbar', $data);
+                $this->load->view('templates/user_navbar', $data);
+
+                $this->load->view('payment/pay', $data);
+
+                //Load the footer
+                $this->load->view('templates/user_footer', $data);
+
+            } else {
+                
+                msg_check_url();
+                redirect('project');
+            
+            }
+        }
+
         else
-            redirect('user');
-
-        $data['title'] = "Project";
-
-        $data['user'] = $this->model_user->get_user();
-        $data['project'] = $this->model_project->get_project_by_id($project_id);
-        $data['project']['agent'] = $this->model_user->get_agent_profile($data['project']['agent_id']);
-        $data['bank'] = $this->model_payment->get_bank();
-
-        $this->load->view('templates/user_header', $data);
-        $this->load->view('templates/user_topbar', $data);
-        $this->load->view('templates/user_navbar', $data);
-
-        $this->load->view('payment/pay', $data);
-
-        //Load the footer
-        $this->load->view('templates/user_footer', $data);
+            redirect('project');
 
     }
 
     public function processing_payment() {
 
-        if(isset($_GET['project']))
-            $project_id = $_GET['project'];
-        else
-            redirect('user');
 
-        $this->form_validation->set_rules('bank', 'Payment Method', 'required');
+
+        if(isset($_GET['id'])) {
+
+            if(is_can_access_project()){
+
+                $project_id = $_GET['id'];
+                $this->form_validation->set_rules('bank', 'Payment Method', 'required');
         
-        $data['project'] = $this->model_project->get_project_by_id($project_id);
+                $data['project'] = $this->model_project->get_project_by_id($project_id);
 
-        if($this->form_validation->run() == false){
+                if($this->form_validation->run() == false){
+                    
+                    $data['title'] = "Project";
+
+                    $data['user'] = $this->model_user->get_user();
+                    $data['project']['agent'] = $this->model_user->get_agent_profile($data['project']['agent_id']);
+                    $data['bank'] = $this->model_payment->get_bank();
+
+                    $this->load->view('templates/user_header', $data);
+                    $this->load->view('templates/user_topbar', $data);
+                    $this->load->view('templates/user_navbar', $data);
+
+                    $this->load->view('payment/pay', $data);
+
+                    //Load the footer
+                    $this->load->view('templates/user_footer', $data);
+
+                } else {
+
+                    $data['project']['bank_id'] = $this->input->post('bank');
+
+                    $data['input'] = [
+                        'project_id'        => $data['project']['project_id'],
+                        'incoming'          => $data['project']['bid'],
+                        'bank_id'           => $data['project']['bank_id'],
+                        'employer_id'       => $data['project']['employer_id'],
+                        'agent_id'          => $data['project']['agent_id'],
+                        'check_status'      => 0,
+
+                    ];
+
+                    $this->db->insert('check_payment', $data['input']);
+
+                    $this->session->set_flashdata(
+                        'message',
+                        '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <small>Your Payment Has Been Processed</small>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>'
+                    );
+
+                    $this->updateProjectStatus(5,$data['project']['project_id']);
+
+                }
+
+            } else {
+                
+                msg_check_url();
+                redirect('project');
             
-            $data['title'] = "Project";
-
-            $data['user'] = $this->model_user->get_user();
-            $data['project']['agent'] = $this->model_user->get_agent_profile($data['project']['agent_id']);
-            $data['bank'] = $this->model_payment->get_bank();
-
-            $this->load->view('templates/user_header', $data);
-            $this->load->view('templates/user_topbar', $data);
-            $this->load->view('templates/user_navbar', $data);
-
-            $this->load->view('payment/pay', $data);
-
-            //Load the footer
-            $this->load->view('templates/user_footer', $data);
-
-        } else {
-
-            $data['project']['bank_id'] = $this->input->post('bank');
-
-            $data['input'] = [
-                'project_id'        => $data['project']['project_id'],
-                'incoming'          => $data['project']['bid'],
-                'bank_id'           => $data['project']['bank_id'],
-                'employer_id'       => $data['project']['employer_id'],
-                'agent_id'          => $data['project']['agent_id'],
-                'check_status'      => 0,
-
-            ];
-
-            $this->db->insert('check_payment', $data['input']);
-
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <small>Your Payment Has Been Processed</small>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>'
-            );
-
-            $this->updateProjectStatus(5,$data['project']['project_id']);
-
+            }
         }
+
+        else
+            redirect('project');
+
     }
 
 

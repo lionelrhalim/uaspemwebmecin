@@ -115,7 +115,7 @@
                             <button type="submit" class="btn btn-primary text-uppercase">
                                 <strong>Confirm</strong>
                             </button>
-                            <a href="project/edit" role="button" class="btn btn-danger">Edit</a>
+                            <a href="edit?id=<?= $project['cart_id']?>" role="button" class="btn btn-danger">Edit</a>
                         </div>
 
                     </form>

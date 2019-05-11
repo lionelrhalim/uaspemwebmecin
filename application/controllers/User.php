@@ -178,27 +178,57 @@ class User extends CI_Controller {
     */
     public function updateProjectStatus($status, $project_id){
 
-        $result = $this->model_user->update_project_status($status, $project_id);
+        if(isset($project_id) && isset($status)) {
+
+            $_GET['id'] = $project_id;
+
+            if(is_can_update_status($status)){
+
+                // If status changed to finish, transfer money to Agent Wallet
+                if($status == 4){
+
+                    $project = $this->model_project->get_project_by_id($project_id);
+
+                    if($project['status'] == 4){
+
+                        msg_check_url();
+                        redirect('project');
+
+                    } else {
+
+                        $get_data = $this->model_user->get_user_profile($project['agent_id']);
+                        $this->model_user->update_wallet($get_data['user_id'], $project['bid']);
+
+                    }
+                    
+                }
+
+                $result = $this->model_user->update_project_status($status, $project_id);
         
-        // If status changed to finish, transfer money to Agent Wallet
-        if($status == 4){
-            $project = $this->model_project->get_project_by_id($project_id);
-            $get_data = $this->model_user->get_user_profile($project['agent_id']);
-            $this->model_user->update_wallet($get_data['user_id'], $project['bid']);
-        }
+                if($result == true){
+                    $project = $this->model_user->get_specific_project($project_id);
+                    $send_result = $this->send_inbox($project);
 
-        if($result == true){
-            $project = $this->model_user->get_specific_project($project_id);
-            $send_result = $this->send_inbox($project);
+                    if($send_result) {
+                        redirect('project');
+                    } else {
+                        var_dump('Gagal Send Inbox');
+                    }
+                } else {
+                    var_dump('Gagal update project status');
+                }
 
-            if($send_result) {
-                redirect('project');
             } else {
-                var_dump('Gagal Send Inbox');
+                
+                msg_check_url();
+                redirect('project');
+            
             }
-        } else {
-            var_dump('Gagal update project status');
         }
+
+        else
+            redirect('project');
+
     }
 
 

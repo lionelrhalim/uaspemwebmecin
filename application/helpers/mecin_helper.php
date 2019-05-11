@@ -58,11 +58,11 @@ function is_can_access_cart() {
 
     $th1s = get_instance();
 
-     /*
-        * ambil user model
-        * ambil get id
-        * ambil tabel cart dengan id
-        * cek apakah bisa akses
+    /*
+     * ambil user model
+     * ambil get id
+     * ambil tabel cart dengan id
+     * cek apakah bisa akses
     */
 
     $data['user'] = $th1s->model_user->get_user();
@@ -81,24 +81,63 @@ function is_can_access_project() {
 
     $th1s = get_instance();
 
-     /*
-        * ambil user model
-        * ambil get id
-        * ambil tabel cart dengan id
-        * cek apakah bisa akses
+    /*
+     * ambil user model
+     * ambil get id
+     * ambil tabel project dengan id
+     * cek apakah bisa akses
     */
 
     $data['user'] = $th1s->model_user->get_user();
-    $cart_id = $_GET['id'];
-    $cart_data = $th1s->model_project->get_from_cart($cart_id);
+    $project_id = $_GET['id'];
+    $project_data = $th1s->model_project->get_project_by_id($project_id);
     
-    if($cart_data['employer_id'] === $data['user']['id'])
+    if($project_data['employer_id'] === $data['user']['id'])
         return TRUE;
     else
         return FALSE;
 
 
 }
+
+
+function is_can_update_status($status) {
+
+    $th1s = get_instance();
+
+    /*
+     * ambil user model
+     * ambil get id
+     * ambil tabel project dengan id
+     * cek apakah bisa akses
+    */
+
+    if ($status == 1 OR $status == -1 OR $status == 3) {
+        
+        $data['user'] = $th1s->model_user->get_user();
+        $project_id = $_GET['id'];
+        $project_data = $th1s->model_project->get_project_by_id($project_id);
+        
+        if($project_data['agent_id'] === $data['user']['id'])
+        return TRUE;
+        else
+        return FALSE;
+        
+    } elseif ($status == 4 OR $status == -4) {
+
+        $data['user'] = $th1s->model_user->get_user();
+        $project_id = $_GET['id'];
+        $project_data = $th1s->model_project->get_project_by_id($project_id);
+        
+        if($project_data['employer_id'] === $data['user']['id'])
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+
+}
+
 
 function msg_check_url() {
 
@@ -107,7 +146,7 @@ function msg_check_url() {
     $th1s->session->set_flashdata(
         'message',
         '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <small>Please check your URL!</small>
+            <small>Uhh, something went wrong...</small>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>

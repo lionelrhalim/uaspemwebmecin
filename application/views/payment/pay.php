@@ -11,7 +11,7 @@
                     <h3 class="card-title text-center">Complete Your Payment</h3>
                     <hr>
 
-                    <form action="<?= base_url('payment/processing_payment?project=' . $project['project_id']); ?>"
+                    <form action="<?= base_url('payment/processing_payment?id=' . $project['project_id']); ?>"
                         method="post">
 
                         <?php ## CHOOSE PAYMENT METHOD ## ?>

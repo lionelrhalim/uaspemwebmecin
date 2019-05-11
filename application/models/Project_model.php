@@ -188,6 +188,18 @@ class Project_model extends CI_Model{
         return $cart['cart_id'];
 
     }
+    
+    public function edit_cart($cart_id, $data) {
+
+
+        $this->db->where('cart_id', $cart_id);
+        $this->db->update('cart', $data);
+
+        $cart = $this->db->get_where('cart', ['project_name' => $data['project_name']])->row_array();
+
+        return $cart['cart_id'];
+
+    }
 
     public function get_from_cart($cart_id) {
         

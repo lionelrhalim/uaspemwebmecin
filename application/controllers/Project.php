@@ -75,14 +75,14 @@ class Project extends CI_Controller {
         }
 
         //Load the header
-        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_header_datatables', $data);
         $this->load->view('templates/user_topbar', $data);
         $this->load->view('templates/user_navbar', $data);
 
         $this->load->view('project/index', $data);
 
         //Load the footer
-        $this->load->view('templates/user_footer', $data);
+        $this->load->view('templates/user_footer_datatables', $data);
 
     }
 
@@ -141,8 +141,7 @@ class Project extends CI_Controller {
             ];
 
             $cart_id = $this->model_project->add_to_cart($data);
-            $_SESSION['cart_id'] = $cart_id;
-            redirect('project/cart');
+            redirect('project/cart?id='.$cart_id);
             
         }
     }
@@ -221,7 +220,7 @@ class Project extends CI_Controller {
         if(isset($_GET['id'])) {
 
             if(is_can_access_cart()){
-              
+
                 $this->model_project->delete_cart($_GET['id']);
                 redirect('project/my_cart');
 
@@ -284,8 +283,6 @@ class Project extends CI_Controller {
             ];
 
             $this->model_project->post_project($data);
-
-            unset($_SESSION['cart_id']);
 
             $this->session->set_flashdata(
                 'message',
@@ -406,11 +403,95 @@ class Project extends CI_Controller {
     */
     public function cancel() {
 
-        $project_id = $this->session->userdata('project_id');
-        $this->session->unset_userdata('project_id');
-        
-        $this->model_project->cancel_project($project_id);
+        if(isset($_GET['id'])) {
 
-        redirect('project');
+            if(is_can_access_project()){
+
+                $this->model_project->cancel_project($_GET['id']);
+                redirect('project');
+
+            } else {
+                
+                msg_check_url();
+                redirect('project');
+            
+            }
+        }
+
+        else
+            redirect('project');
+
+    }
+
+
+    /*
+     * Name = edit() method
+     * Description
+     *      User edit the project details
+    */
+    public function edit() {
+
+        if(isset($_GET['id'])) {
+
+            if(is_can_access_cart()){
+
+                $data['user'] = $this->model_user->get_user();
+
+                $this->form_validation->set_rules('projectname', 'Project Name', 'required');
+                $this->form_validation->set_rules('desc', 'Description', 'required');
+                $this->form_validation->set_rules('field_category', 'Field Category', 'required');
+                $this->form_validation->set_rules('job_category', 'Job Category', 'required');
+                $this->form_validation->set_rules('times', 'Deadline', 'required|callback_date_check');
+                $this->form_validation->set_rules('price', 'Price', 'required');
+
+                if($this->form_validation->run() == false){
+                    
+                    $data['title'] = 'Project | MECIN.co';
+                    $data['field'] = $this->db->get('field_category')->result_array();
+                    $data['job'] = $this->db->get('job_category')->result_array();
+
+                    $cart_id = $_GET['id'];
+                    $data['project'] = $this->model_project->get_from_cart($cart_id);
+            
+                    $this->load->view('templates/user_header', $data);
+                    $this->load->view('templates/user_topbar', $data);
+                    $this->load->view('templates/user_navbar', $data);
+                    $this->load->view('project/edit', $data);
+                    $this->load->view('templates/user_footer', $data);
+
+                } else{
+
+                    $cart_id = $_GET['id'];
+                    $data['project'] = $this->model_project->get_from_cart($cart_id);
+                    
+                    $employer_id = $data['user']['id'];
+                    $agent_id = $data['project']['agent_id'];
+
+                    $data = [
+                        'project_name'      => $this->input->post('projectname', TRUE),
+                        'field_category'    => $this->input->post('field_category', TRUE),
+                        'job_category'      => $this->input->post('job_category', TRUE),
+                        'deadline'          => $this->input->post('times', TRUE),
+                        'bid'               => $this->input->post('price', TRUE),
+                        'description'       => $this->input->post('desc', TRUE),
+                        'employer_id'       => $employer_id,
+                        'agent_id'          => $agent_id,
+                    ];
+
+                    $cart_id = $this->model_project->edit_cart($cart_id, $data);
+                    redirect('project/cart?id='.$cart_id);
+                    
+                }
+
+            } else {
+                msg_check_url();
+                redirect('project');
+            
+            }
+        }
+
+        else
+            redirect('project');
+
     }
 }
