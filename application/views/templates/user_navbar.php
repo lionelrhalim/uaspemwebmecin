@@ -44,6 +44,9 @@
                                 <?= $count_inbox; ?>
                             </span>
 
+                        <?php elseif($nb['title'] == 'Browse'): ?>
+                        <a class="nav-link" href="<?= base_url($nb['url']); ?>">
+
                         <?php else : ?>
                         <a class="nav-link" href="<?= base_url($nb['url']); ?>">
                         <?php endif; ?>

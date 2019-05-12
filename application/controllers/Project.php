@@ -54,6 +54,7 @@ class Project extends CI_Controller {
         $data['project'] = $this->model_project->get_project($sort);
 
         $data['employer'] = [];
+
         $data['developer'] = [];
         $data['countProposedEmployer'] = 0;
         $data['countNeedPaidEmployer'] = 0;
@@ -68,7 +69,7 @@ class Project extends CI_Controller {
         foreach ($data['project'] as $project) {
             array_push($data['employer'], $this->model_user->get_user_profile($project['employer_id']));
         }
-
+        
         //Get Agent Profile
         foreach ($data['project'] as $project) {
             array_push($data['developer'], $this->model_user->get_user_profile($project['agent_id']));

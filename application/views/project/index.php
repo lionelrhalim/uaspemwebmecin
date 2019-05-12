@@ -648,10 +648,22 @@
                                                                             </div>
                                                                         </div>
 
+                                                                        <div>
+                                                                            <h5 class="card-text">You may send your finished project to one of the following contact(s):</h5>
+                                                                            
+                                                                            <?php if($employer[$key]['line']!=null){?>
+                                                                                <h6><i class="fab fa-line"></i>
+                                                                                <?php echo ' : '. $employer[$key]['line']; ?></h6>
+                                                                            <?php } ?>
+                                                                            <h6><i class="fas fa-phone"></i><?php echo ' : '. $employer[$key]['phone']; ?></h6>
+                                                                            <h6><i class="fas fa-at"></i><?php echo ' : '. $employer[$key]['email']; ?></h6>
+                                                                        </div>
+
                                                                         <div class="row justify-content-center">
                                                                             <a class="btn btn-primary"
                                                                                 href="<?= base_url('user/updateProjectStatus/3/' . $row['project_id'] . '/') ?>">Finish</a>
                                                                         </div>
+
                                                                     </div>
                                                                 </div>
 
