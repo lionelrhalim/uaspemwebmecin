@@ -188,7 +188,6 @@ class Payment extends CI_Controller {
      *      status =  5 [Payment Checking]
     */
     public function updateProjectStatus($status, $project_id){
-        var_dump($project_id);
 
         $result = $this->model_user->update_project_status($status, $project_id);
 

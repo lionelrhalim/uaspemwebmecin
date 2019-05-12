@@ -38,6 +38,8 @@ class User extends CI_Controller {
     */
     public function index() {
 
+        $get_id = $this->session->userdata('id');
+
         $data['title'] = "Dashboard";
 
         $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
@@ -49,7 +51,7 @@ class User extends CI_Controller {
 
         // Load project, employer, and agent data
         $data['project'] = $this->model_project->get_project(0);
-        $data['countProject'] = $this->model_project->count_project();
+        $data['countProject'] = $this->model_project->count_project($get_id);
         $data['employer'] = [];
         $data['agent'] = [];
         foreach ($data['project'] as $project) {
@@ -690,6 +692,25 @@ class User extends CI_Controller {
 
         }
 
+    }
+
+    public function browse(){
+        $get_id = $this->session->userdata('id');
+
+        $data['title'] = "Browse";
+
+        $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
+        $data['field'] = $this->db->get('field_category')->result_array();
+        $data['job'] = $this->db->get('job_category')->result_array();
+
+
+        $data['top_agent'] = $this->model_user->get_all_agent();
+    
+        $this->load->view('templates/user_header', $data);
+        $this->load->view('templates/user_topbar', $data);
+        $this->load->view('templates/user_navbar', $data);
+        $this->load->view('user/browse', $data);
+        $this->load->view('templates/user_footer', $data);
     }
 
 }
