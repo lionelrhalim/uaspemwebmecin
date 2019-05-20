@@ -65,7 +65,7 @@ class Payment extends CI_Controller {
 
         if(isset($_GET['id'])) {
 
-            if(is_can_access_project()){
+            if(is_can_access_project() && is_can_access_payment()){
 
                 $project_id = $_GET['id'];
                 $data['title'] = "Project";
@@ -98,8 +98,6 @@ class Payment extends CI_Controller {
     }
 
     public function processing_payment() {
-
-
 
         if(isset($_GET['id'])) {
 

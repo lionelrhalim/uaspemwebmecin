@@ -269,4 +269,15 @@ class Project_model extends CI_Model{
 
     }
 
+
+    public function get_check_payment($project_id) {
+
+        $this->db->select("*");
+        $this->db->from('check_payment');
+        $this->db->where('project_id', $project_id);
+        $result = $this->db->get();
+
+        return $result->row_array();
+    }
+
 }

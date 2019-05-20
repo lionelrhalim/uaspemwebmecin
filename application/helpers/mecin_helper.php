@@ -104,6 +104,23 @@ function is_can_access_project() {
 }
 
 
+function is_can_access_payment() {
+
+
+    $th1s = get_instance();
+
+    $data['user'] = $th1s->model_user->get_user();
+    $project_id = $_GET['id'];
+    $project_data = $th1s->model_project->get_check_payment($project_id);
+    
+    if (($project_data['employer_id'] === $data['user']['id'] && $project_data['check_status'] == 0) OR ($project_data == NULL))
+        return TRUE;
+    else
+        return FALSE;
+
+}
+
+
 function is_can_update_status($status) {
 
     $th1s = get_instance();
@@ -115,27 +132,32 @@ function is_can_update_status($status) {
      * cek apakah bisa akses
     */
 
-    if ($status == 1 OR $status == -1 OR $status == 3) {
-        
-        $data['user'] = $th1s->model_user->get_user();
-        $project_id = $_GET['id'];
-        $project_data = $th1s->model_project->get_project_by_id($project_id);
+    $data['user'] = $th1s->model_user->get_user();
+    $project_id = $_GET['id'];
+    $project_data = $th1s->model_project->get_project_by_id($project_id);
+
+    if ($project_data['status'] == -1 OR $project_data['status'] == 4 OR $project_data['status'] == -99)
+        return FALSE;
+
+    if (($status == 1 && $project_data['status'] == 0) OR $status == -1 OR ($status == 3 && $project_data['status'] == 2)) {
         
         if($project_data['agent_id'] === $data['user']['id'])
-        return TRUE;
+            return TRUE;
         else
-        return FALSE;
+            return FALSE;
         
-    } elseif ($status == 4 OR $status == -4) {
+    } elseif ($status == 4) {
 
-        $data['user'] = $th1s->model_user->get_user();
-        $project_id = $_GET['id'];
-        $project_data = $th1s->model_project->get_project_by_id($project_id);
         
         if($project_data['employer_id'] === $data['user']['id'])
             return TRUE;
         else
             return FALSE;
+
+    } else {
+
+        return FALSE;
+
     }
 
 
