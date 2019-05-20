@@ -159,6 +159,7 @@ class User extends CI_Controller {
             $data['user']['email'] = null;
             $data['user']['is_dev'] = 1;
             $data['user']['hide_wallet'] = 1;
+            $data['user']['can_edit'] = FALSE;
 
             // Load the view
             $this->load->view('user/profile', $data);
