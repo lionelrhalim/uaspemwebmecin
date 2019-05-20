@@ -413,6 +413,12 @@ class User extends CI_Controller {
         $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
         $data['inbox_detail'] = $this->model_user->get_inbox_detail($data['user']['id'], $inbox_id, $project_id);
 
+        if ($data['inbox_detail'] == NULL) {
+
+            redirect('user');
+
+        }
+
         $data['from'] = $this->model_user->get_user_profile($data['inbox_detail'][0]['from_id']);
         $data['to'] = $this->model_user->get_user_profile($data['inbox_detail'][0]['user_id']);
 
