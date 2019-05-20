@@ -118,7 +118,7 @@ class Project_model extends CI_Model{
     }
 
     public function count_project($id) {
-        $query = "SELECT status, COUNT(*) as 'total' FROM project WHERE agent_id=$id GROUP BY status";
+        $query = "SELECT status, COUNT(*) as 'total' FROM project WHERE agent_id=$id OR employer_id=$id GROUP BY status";
         $data['countProject'] = $this->db->query($query)->result_array();
 
         foreach ($data['countProject'] as $key => $value) {

@@ -34,7 +34,7 @@
                         <img src="<?= base_url('assets/img/profile/') . $user['image']; ?>" class="card-img w-50 p-3">
                         <h2 class="card-title font-weight-bold"><?= $user['name']; ?></h2>
 
-                        <?php if ($user['is_dev'] === 0) : ?>
+                        <?php if ($user['can_edit'] === TRUE) : ?>
                         <p class="card-text"><?= $user['email']; ?></p>
 
                         <?php elseif ($user['is_dev'] === 1) : ?>
@@ -65,7 +65,6 @@
                         <br>
                         <br>
                         <p class="card-text">Job complete : <?= $user['job_complete']; ?></p>
-                        <p class="card-text">Job ongoing : <?= $user['job_ongoing']; ?></p>
                         <p class="card-text">Starting bid : <?= $user['starting_bid']; ?></p>
                         <?php endif; ?>
 
@@ -74,6 +73,10 @@
                                 Member since <?= date('d F Y', $user['date_created']); ?>
                             </small>
                         </p>
+
+                        <?php if ($user['can_edit'] === TRUE) : ?>
+                        <a href="edit" role="button" class="btn btn-primary">Edit</a>
+                        <?php endif; ?>
 
                         <hr>
 
@@ -92,9 +95,13 @@
                                     value="<?= number_format(intval($user['wallet'])); ?>" disabled>
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-primary" type="button"
-                                        id="button-addon1">Refill</button>
+                                        id="button-addon1" disabled>Refill</button>
                                 </div>
                             </div>
+                            
+                            <small class="float-right text-danger my-2">*MecinPowder<sup>&reg;</sup> sedang menunggu izin Otoritas Jasa Keungan (OJK).</small>
+
+                            <hr class="my-5">
 
                             <div class="mt-3">
                                 Developer Mode
@@ -122,8 +129,6 @@
                 </div>
             </div>
         </div>
-
-
 
 
     </div>

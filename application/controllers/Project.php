@@ -104,6 +104,11 @@ class Project extends CI_Controller {
         if($contact_id == NULL)
             redirect('user');
 
+        $profile = $this->model_user->get_user_profile($contact_id);
+
+        if($profile['is_dev'] == 0)
+            redirect('user');
+
         $this->form_validation->set_rules('projectname', 'Project Name', 'required');
         $this->form_validation->set_rules('desc', 'Description', 'required');
         $this->form_validation->set_rules('field_category', 'Field Category', 'required');

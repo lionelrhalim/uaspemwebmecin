@@ -202,10 +202,10 @@ class Auth extends CI_Controller {
     private function _sendEmail($token, $type){
         $config = [
             'protocol'  => 'smtp',
-            'smtp_host' => 'ssl://smtp.googlemail.com',
-            'smtp_user' => 'noreply.mecinan@gmail.com',
-            'smtp_pass' => 'uaspemwebmecin',
-            'smtp_port' => 465, //port smtp google
+            'smtp_host' => 'smtp.hostinger.co.id',
+            'smtp_user' => 'noreply@mecinan.site',
+            'smtp_pass' => 'BoHPsIOmAb52',
+            'smtp_port' => 587,
             'mailtype'  => 'html',
             'charset'   => 'utf-8',
             'newline'   => "\r\n"
@@ -215,7 +215,7 @@ class Auth extends CI_Controller {
         $this->email->initialize($config);
 
         //set ingin kirim darimana
-        $this->email->from('noreply.mecinan@gmail.com', 'Mecin.an');
+        $this->email->from('noreply@mecinan.site', 'Mecin.an');
         
         //set ingin kirim kemana
         $this->email->to($this->input->post('email'));

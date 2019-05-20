@@ -104,6 +104,7 @@ class User extends CI_Controller {
             $get_id = $sid;
 
         $result = $this->model_user->get_user_profile($sid);
+
         $data['user'] = $result;
         $data['user']['id'] = $sid;
 
@@ -120,8 +121,9 @@ class User extends CI_Controller {
             $this->load->view('templates/user_navbar', $data);
 
             // Additional data
-            $data['user']['headline'] = null;
+            $data['user']['headline'] = NULL;
             $data['user']['hide_wallet'] = 0;
+            $data['user']['can_edit'] = TRUE;
 
             // Load the view
             $this->load->view('user/profile', $data);
@@ -148,6 +150,10 @@ class User extends CI_Controller {
             $data['field'] = $result['field'];
             $data['job'] = $result['job'];
             $data['skill'] = $result['skill'];
+
+            if($result['profile'] == NULL){
+                redirect('user/profile');
+            }
 
             // Additional data
             $data['user']['email'] = null;
@@ -185,6 +191,7 @@ class User extends CI_Controller {
             $_GET['id'] = $project_id;
 
             if(is_can_update_status($status)){
+                
 
                 // If status changed to finish, transfer money to Agent Wallet
                 if($status == 4){
@@ -198,8 +205,7 @@ class User extends CI_Controller {
 
                     } else {
 
-                        $get_data = $this->model_user->get_user_profile($project['agent_id']);
-                        $this->model_user->update_wallet($get_data['user_id'], $project['bid']);
+                        redirect('user/rate?id='.$project_id);
 
                     }
                     
@@ -233,6 +239,82 @@ class User extends CI_Controller {
 
     }
 
+
+
+    public function rate () {
+
+        $data['user'] = $this->model_user->get_user();
+
+        $project_id = $_GET['id'];
+
+        if($project_id == NULL)
+            redirect('user');
+
+
+        if(is_can_update_status(4)){
+
+            $project = $this->model_project->get_project_by_id($project_id);
+
+            if($project['status'] != 3){
+
+                msg_check_url();
+                redirect('project');
+
+            } else {
+
+                $this->form_validation->set_rules('rate', 'Rating', 'required');
+
+                if($this->form_validation->run() == false){
+                    
+                    $data['title'] = 'Rate | MECIN.co';
+                    $data['field'] = $this->db->get('field_category')->result_array();
+                    $data['job'] = $this->db->get('job_category')->result_array();
+
+                    $project = $this->model_project->get_project_by_id($project_id);
+                    
+                    $data['project'] = $project;
+                    $data['agent'] = $this->model_user->get_agent_profile($project['agent_id']);
+                    
+
+                    $this->load->view('templates/user_header', $data);
+                    $this->load->view('templates/user_topbar', $data);
+                    $this->load->view('templates/user_navbar', $data);
+                    $this->load->view('project/rate', $data);
+                    $this->load->view('templates/user_footer', $data);
+
+                } else{
+                    
+                    $get_data = $this->model_user->get_user_profile($project['agent_id']);
+                    $this->model_user->update_wallet($get_data['user_id'], $project['bid']);
+                    $this->model_user->update_rating_and_job_done($get_data['user_id'], $this->input->post('rate'));
+
+                    $result = $this->model_user->update_project_status(4, $project_id);
+    
+                    if($result == true){
+                        $project = $this->model_user->get_specific_project($project_id);
+                        $send_result = $this->send_inbox($project);
+
+                        if($send_result) {
+                            redirect('project');
+                        } else {
+                            var_dump('Gagal Send Inbox');
+                        }
+                    } else {
+                        var_dump('Gagal update project status');
+                    }
+                    
+                }
+
+            }
+
+        } else {
+            
+            msg_check_url();
+            redirect('project');
+        
+        }
+
+    }
 
 
     /*
@@ -601,6 +683,9 @@ class User extends CI_Controller {
             $data['view_fields'] = $this->load->view('opt/field.php', $data, TRUE);
             $data['view_skill'] = $this->load->view('opt/skill.php', $data, TRUE);
 
+            $data['tagline'] = NULL;
+            $data['fee'] = NULL;
+
             $this->load->view('templates/user_header', $data);
             $this->load->view('templates/user_topbar', $data);
             $this->load->view('user/todeveloperform', $data);
@@ -620,7 +705,7 @@ class User extends CI_Controller {
             redirect('user/profile');
 
         $this->form_validation->set_rules('tagline', 'Headline', 'required');
-        $this->form_validation->set_rules('fee', 'Bid', 'required');
+        $this->form_validation->set_rules('fee', 'Bid', 'required|greater_than[0]');
         
         if($this->form_validation->run() == false) {
 
@@ -695,6 +780,7 @@ class User extends CI_Controller {
     }
 
     public function browse(){
+
         $get_id = $this->session->userdata('id');
 
         $data['title'] = "Browse";

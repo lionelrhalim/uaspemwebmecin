@@ -80,7 +80,7 @@
                                                 <div class="row justify-content-center">
 
                                                     <?php foreach ($project as $key=>$row): ?>
-                                                    <?php if($row['employer_id'] == $user['id'] && ($row['status'] == '0' OR $row['status'] == '2')): ?>
+                                                    <?php if($row['employer_id'] == $user['id'] && ($row['status'] == '0' OR $row['status'] == '2' OR $row['status'] == '-4')): ?>
                                                     <?php $countProposedEmployer++; ?>
                                                     <div class="col-6 card-deck mx-auto">
                                                         <div class="card shadow-sm mb-3">
@@ -346,10 +346,26 @@
                                                                                     class="btn btn-success mx-1"
                                                                                     role="button"
                                                                                     style="width:7rem; margin-top:1rem;">Satisfied</a>
-                                                                                <a href="<?= base_url('user/updateProjectStatus/-4/' . $row['project_id'] . '/') ?>"
-                                                                                    class="btn btn-danger mx-1"
-                                                                                    role="button"
-                                                                                    style="width:7rem; margin-top:1rem;">Complain</a>
+
+                                                                                <div>
+                                                                                    <p
+                                                                                        class="card-text text-center mt-3">
+                                                                                        Contact your agent if
+                                                                                        there's a problem:</p>
+
+                                                                                    <?php if($developer[$key]['line']!=null){?>
+                                                                                    <h6><i class="fab fa-line"></i>
+                                                                                        <?php echo ' : '. $developer[$key]['line']; ?>
+                                                                                    </h6>
+                                                                                    <?php } ?>
+                                                                                    <h6><i
+                                                                                            class="fas fa-phone"></i><?php echo ' : '. $developer[$key]['phone']; ?>
+                                                                                    </h6>
+                                                                                    <h6 style="font-size:0.80rem;"><i
+                                                                                            class="fas fa-at"></i><?php echo ' : '. $developer[$key]['email']; ?>
+                                                                                    </h6>
+                                                                                </div>
+
                                                                                 <?php endif ?>
                                                                             </div>
                                                                         </div>
@@ -648,20 +664,27 @@
                                                                             </div>
                                                                         </div>
 
-                                                                        <div>
-                                                                            <h5 class="card-text">You may send your finished project to one of the following contact(s):</h5>
-                                                                            
-                                                                            <?php if($employer[$key]['line']!=null){?>
-                                                                                <h6><i class="fab fa-line"></i>
-                                                                                <?php echo ' : '. $employer[$key]['line']; ?></h6>
-                                                                            <?php } ?>
-                                                                            <h6><i class="fas fa-phone"></i><?php echo ' : '. $employer[$key]['phone']; ?></h6>
-                                                                            <h6><i class="fas fa-at"></i><?php echo ' : '. $employer[$key]['email']; ?></h6>
-                                                                        </div>
-
                                                                         <div class="row justify-content-center">
                                                                             <a class="btn btn-primary"
                                                                                 href="<?= base_url('user/updateProjectStatus/3/' . $row['project_id'] . '/') ?>">Finish</a>
+                                                                        </div>
+
+                                                                        <div>
+                                                                            <p class="card-text text-center mt-3">
+                                                                                Contact your agent if
+                                                                                there's a problem:</p>
+
+                                                                            <?php if($employer[$key]['line']!=null){?>
+                                                                            <h6><i class="fab fa-line"></i>
+                                                                                <?php echo ' : '. $employer[$key]['line']; ?>
+                                                                            </h6>
+                                                                            <?php } ?>
+                                                                            <h6><i
+                                                                                    class="fas fa-phone"></i><?php echo ' : '. $employer[$key]['phone']; ?>
+                                                                            </h6>
+                                                                            <h6 style="font-size:0.80rem;"><i
+                                                                                    class="fas fa-at"></i><?php echo ' : '. $employer[$key]['email']; ?>
+                                                                            </h6>
                                                                         </div>
 
                                                                     </div>
@@ -698,113 +721,6 @@
                                 </div>
                                 <?php ## END OF ON GOING PROJECTS ## ?>
 
-
-                                <?php ## COMPLAINED PROJECTS ## ?>
-                                <div class="card">
-
-                                    <div class="card-header" id="headingThree">
-                                        <button class="btn btn-link btn-link-accordion collapsed" type="button"
-                                            data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
-                                            aria-controls="collapseThree">
-                                            <h4 class="font-heading-primary mb-0">Complained Project</h4>
-                                        </button>
-                                    </div>
-
-                                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
-                                        data-parent="#accordionExample2">
-                                        <div class="card-body">
-
-                                            <div class="container">
-                                                <div class="row">
-
-                                                    <?php foreach ($project as $key=>$row): ?>
-                                                    <?php if($row['agent_id'] == $user['id'] && $row['status'] == -4): ?>
-                                                    <?php $countComplainedAgent++; ?>
-                                                    <div class="col-6 card-deck mx-auto">
-                                                        <div class="card shadow-sm mb-3">
-                                                            <div class="row no-gutters">
-
-                                                                <div class="col-md-12">
-                                                                    <div class="card-body">
-                                                                        <h6
-                                                                            class="card-text badge badge-pill badge-primary p-2">
-                                                                            <?= $row['job_category']; ?></h6>
-                                                                        <h5 class="card-text">
-                                                                            <?= $row['project_name']; ?>
-                                                                        </h5>
-                                                                        <br>
-
-                                                                        <p class="card-text font-primary mb-1">Project
-                                                                            From
-                                                                        </p>
-                                                                        <div class="row mb-2">
-                                                                            <div
-                                                                                class="col-12 col-md-3 col-lg-5 mb-2 mb-md-0">
-                                                                                <img src="<?= base_url('assets/img/profile/') . $employer[$key]['image']; ?>"
-                                                                                    class="card-img">
-                                                                            </div>
-                                                                            <div class="col text-center text-md-left">
-                                                                                <h5 class="card-text">
-                                                                                    <?= $employer[$key]['name'] ?></h5>
-                                                                                <h6 class="text-card">
-                                                                                    <i
-                                                                                        class="fas fa-clock font-primary"></i>
-                                                                                    &nbsp;
-                                                                                    <?php $dateFormat = strtotime($row['deadline']); ?>
-                                                                                    <?= date('d F Y', $dateFormat) ?>
-                                                                                </h6>
-                                                                                <br>
-                                                                                <h6>Bid:
-                                                                                    <?php
-                                                                                            setlocale(LC_MONETARY, 'en_US');
-                                                                                            echo "IDR " . number_format($row['bid'], 0, '', '.');
-                                                                                        ?>
-                                                                                </h6>
-                                                                                <p
-                                                                                    class="badge badge-<?= $row['color'] ?>">
-                                                                                    <?= $row['status_desc_agent'] ?>
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="row justify-content-center">
-                                                                            <a href="<?= base_url('user/updateProjectStatus/3/' . $row['project_id'] . '/') ?>"
-                                                                                class="btn btn-primary" role="button"
-                                                                                style="width:10rem; margin-top:1rem;">Finish
-                                                                                Revision</a>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <?php endif ?>
-                                                    <?php endforeach ?>
-
-                                                    <?php if($countComplainedAgent<= 0): ?>
-                                                    <div class="card shadow-sm mb-3 ml-3 col-lg-12 mx-auto">
-                                                        <div class="row no-gutters">
-
-                                                            <div class="col-md-12">
-                                                                <div class="card-body">
-                                                                    <h6 class="card-text text-center">No Complained
-                                                                        Project</h6>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                    <?php endif ?>
-
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php ## END OF COMPLAINED PROJECTS ## ?>
 
                                 <?php ## FINISHED PROJECT ## ?>
                                 <div class="card">

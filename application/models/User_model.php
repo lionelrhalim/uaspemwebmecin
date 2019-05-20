@@ -164,6 +164,39 @@ class User_model extends CI_Model{
     }
 
 
+    public function update_rating_and_job_done($user_id, $rating) {
+
+        $data_now = $this->db->select('rating, job_complete')->from('developer_profile')->where('user_id', $user_id)->get()->row_array();
+        $new_job_done = intval($data_now['job_complete']) + 1;
+
+        if ($new_job_done == 1) {
+
+            $new_rating = floatval ($rating);
+        
+        } else {
+            
+            $new_rating = floatval ((floatval ($data_now['rating']) + floatval ($rating)) / 2.0);
+
+        }
+        
+
+        $this->db->trans_begin();
+        $this->db->set('rating', $new_rating);
+        $this->db->set('job_complete', $new_job_done);
+        $this->db->where('user_id', $user_id);
+        $this->db->update('developer_profile');
+		$this->db->trans_complete();
+
+		if($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback();
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+    }
+
+
 
     public function get_specific_project($project_id) {
 
@@ -353,7 +386,6 @@ class User_model extends CI_Model{
             $this->db->set('starting_bid', $price);
             $this->db->set('rating', 0);
             $this->db->set('job_complete', 0);
-            $this->db->set('job_ongoing', 0);
             $this->db->insert('developer_profile');
 
             $this->db->set('is_dev', 1);
