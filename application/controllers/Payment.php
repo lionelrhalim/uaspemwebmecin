@@ -62,6 +62,7 @@ class Payment extends CI_Controller {
         $data['project'] = $this->model_payment->get_check_payment_by_id($process_id);
         $this->model_payment->set_check_payment($process_id, $set_status);
         
+        
         if($set_status == 1) {
             $this->updateProjectStatus(2, $data['project']['project_id']);
         } else {

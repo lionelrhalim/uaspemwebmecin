@@ -113,7 +113,7 @@ function is_can_access_payment() {
     $project_id = $_GET['id'];
     $project_data = $th1s->model_project->get_check_payment($project_id);
     
-    if (($project_data['employer_id'] === $data['user']['id'] && $project_data['check_status'] == 0) OR ($project_data == NULL))
+    if (($project_data['employer_id'] === $data['user']['id'] && $project_data['check_status'] == 0) OR ($project_data['employer_id'] === $data['user']['id'] && $project_data['check_status'] == 2) OR ($project_data == NULL))
         return TRUE;
     else
         return FALSE;
