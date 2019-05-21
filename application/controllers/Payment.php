@@ -34,6 +34,12 @@ class Payment extends CI_Controller {
     }
 
     public function check() {
+
+        $user = $this->model_user->get_user();
+        
+        if($user['role_id'] == 2)
+            redirect('auth/blocked');
+
         $data['title'] = "Check Payment";
         $data['user'] = $this->db->get_where( 'user', ['email' => $this->session->userdata('email')] )->row_array();
         $data['payment'] = $this->model_payment->get_check_payment();
@@ -55,7 +61,13 @@ class Payment extends CI_Controller {
 
         $data['project'] = $this->model_payment->get_check_payment_by_id($process_id);
         $this->model_payment->set_check_payment($process_id, $set_status);
-        $this->updateProjectStatus(2, $data['project']['project_id']);
+        
+        if($set_status == 1) {
+            $this->updateProjectStatus(2, $data['project']['project_id']);
+        } else {
+            $this->updateProjectStatus(1, $data['project']['project_id']);
+        }
+
         $this->check();
     }
 

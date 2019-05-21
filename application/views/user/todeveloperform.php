@@ -12,7 +12,7 @@
 							<h3 class="h5 text-gray-900 mb-4">Show us what you've got.</h3>
 						</div>
 
-						<form method="post" action="<?= base_url('user/edit_developer_profile'); ?>">
+						<form method="post" action="<?= base_url('user/new_developer_profile'); ?>">
 
 							<div class="form-group">
 							<input type="text" class="form-control form-control-user" id="tagline" name="tagline" placeholder="Write your headline" value="<?= $tagline; ?>">

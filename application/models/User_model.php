@@ -375,7 +375,7 @@ class User_model extends CI_Model{
 
 
 
-        $check_id = $this->db->get_where('developer_profile', ['user_id' => $id]);
+        $check_id = $this->db->get_where('developer_profile', ['user_id' => $id])->result_array();
 
         if(!$check_id) {
 

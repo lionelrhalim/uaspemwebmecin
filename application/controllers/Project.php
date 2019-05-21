@@ -323,7 +323,7 @@ class Project extends CI_Controller {
         $deadline = date('d F Y', strtotime($timeNow . '+3 day'));
         $get_time = date('d F Y', strtotime($date));
 
-        if ($get_time > $deadline) {
+        if (strtotime($get_time) > strtotime($deadline)) {
             return TRUE;
         } else {
             $this->form_validation->set_message('date_check', 'Please set the deadline 3 days from now');
